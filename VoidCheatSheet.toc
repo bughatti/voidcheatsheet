@@ -1,0 +1,9 @@
+## Interface: 120001
+## Title: VoidCheatSheet
+## Notes: Raid boss cheat sheets — shows mechanics, tips, and role-specific notes in-game
+## Author: VoidUI
+## Version: 1.0.0
+## SavedVariables: VoidCheatSheetDB
+
+Data.lua
+VoidCheatSheet.lua
