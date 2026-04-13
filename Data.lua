@@ -451,6 +451,20 @@ D.corePrinciple = "Consistency over greed -- mechanical execution matters more t
 D.byNpcID = {}
 D.byExactName = {}
 D.byInstanceBoss = {}  -- instanceName → {boss1, boss2, ...}
+D.byEncounterID = {}   -- ENCOUNTER_START encounterID → boss (from DBM source)
+
+-- Encounter IDs (from DBM source code)
+local raidEncounterIDs = {
+    [3176] = "Imperator Averzian",
+    [3177] = "Vorasius",
+    [3179] = "Fallen-King Salhadaar",
+    [3178] = "Vaelgor & Ezzorak",
+    [3180] = "Lightblinded Vanguard",
+    [3181] = "Crown of the Cosmos",
+    [3306] = "Chimaerus",
+    [3182] = "Belo'ren",
+    [3183] = "Midnight Falls (L'ura)",
+}
 
 -- Register raid bosses
 for _, raid in ipairs(D.raids) do
@@ -458,6 +472,14 @@ for _, raid in ipairs(D.raids) do
     for _, boss in ipairs(raid.bosses) do
         D.byExactName[boss.name] = boss
         D.byInstanceBoss[raid.name][#D.byInstanceBoss[raid.name] + 1] = boss
+    end
+end
+
+-- Register encounter IDs
+for eid, bossName in pairs(raidEncounterIDs) do
+    local boss = D.byName[bossName:lower():gsub("%s+", "")]
+    if boss then
+        D.byEncounterID[eid] = boss
     end
 end
 

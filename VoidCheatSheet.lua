@@ -717,23 +717,27 @@ local function OnTargetChanged()
         end
     end
 
-    -- Method 2: Zone-based detection (for instanced content where names are tainted)
+    -- Method 2: NPC ID from GUID (works if GUID isn't tainted)
+    if not boss then
+        local guidOk, guid = pcall(UnitGUID, unit)
+        if guidOk and guid then
+            local parseOk, npcID = pcall(function()
+                local id = select(6, strsplit("-", guid))
+                return tonumber(id)
+            end)
+            if parseOk and npcID and D.byNpcID then
+                boss = D.byNpcID[npcID]
+            end
+        end
+    end
+
+    -- Method 3: Zone-based detection for single-boss instances (delves)
     if not boss then
         local instanceName = GetInstanceInfo()
         if instanceName and D.byInstanceBoss then
-            -- In a known instance — check if target is elite/boss type
-            local classification = UnitClassification(unit) or ""
-            local ok2, isElite = pcall(function()
-                return classification == "elite" or classification == "boss"
-                    or classification == "worldboss" or classification == "rareelite"
-            end)
-            if ok2 and isElite then
-                local instBosses = D.byInstanceBoss[instanceName]
-                if instBosses and #instBosses > 0 then
-                    -- Show the first boss in the instance as the tooltip
-                    -- User can click to see full instance panel
-                    boss = instBosses[1]
-                end
+            local instBosses = D.byInstanceBoss[instanceName]
+            if instBosses and #instBosses == 1 then
+                boss = instBosses[1]
             end
         end
     end
@@ -756,22 +760,35 @@ local function OnEncounterStart(encounterID, encounterName)
     -- Hide tooltip if showing
     if tooltipFrame then tooltipFrame:Hide() end
 
-    -- Try to find this boss and show full panel
-    if autoPopupEnabled and encounterName then
-        local boss = FindBoss(encounterName)
-        if boss then
-            ShowBoss(boss)
+    if not autoPopupEnabled then return end
+
+    local boss = nil
+
+    -- Try encounterID lookup first (always clean)
+    if encounterID and D.byEncounterID then
+        boss = D.byEncounterID[encounterID]
+    end
+
+    -- Try encounterName (may be tainted in 12.0)
+    if not boss and encounterName then
+        local ok, result = pcall(FindBoss, encounterName)
+        if ok and result then
+            boss = result
         end
+    end
+
+    if boss then
+        ShowTooltip(boss)
     end
 end
 
 local function OnEncounterEnd()
     inEncounter = false
-    -- Auto-hide the full panel after encounter ends
-    if frame and frame:IsShown() then
-        C_Timer.After(5, function()
-            if not inEncounter and frame and frame:IsShown() then
-                -- Don't auto-hide if user manually opened it
+    -- Hide tooltip after encounter ends
+    if tooltipFrame and tooltipFrame:IsShown() then
+        C_Timer.After(3, function()
+            if not inEncounter and tooltipFrame then
+                tooltipFrame:Hide()
             end
         end)
     end
@@ -811,7 +828,10 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     end
 
     if event == "ENCOUNTER_START" then
-        OnEncounterStart(arg1, arg2)
+        local ok, err = pcall(OnEncounterStart, arg1, arg2)
+        if not ok then
+            print(C_RED .. "[VoidCheatSheet] Encounter error: " .. tostring(err) .. "|r")
+        end
         return
     end
 
