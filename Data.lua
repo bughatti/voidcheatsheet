@@ -443,3 +443,44 @@ D.bloodlustTimings = {
 -- Core Principle
 ----------------------------------------------------------------------
 D.corePrinciple = "Consistency over greed -- mechanical execution matters more than raw damage output across all encounters this tier."
+
+----------------------------------------------------------------------
+-- NPC ID lookup (for tainted string bypass in WoW 12.0)
+-- UnitGUID gives clean numeric NPC IDs even when UnitName is tainted
+----------------------------------------------------------------------
+D.byNpcID = {}
+D.byExactName = {}
+D.byInstanceBoss = {}  -- instanceName → {boss1, boss2, ...}
+
+-- Register raid bosses
+for _, raid in ipairs(D.raids) do
+    D.byInstanceBoss[raid.name] = {}
+    for _, boss in ipairs(raid.bosses) do
+        D.byExactName[boss.name] = boss
+        D.byInstanceBoss[raid.name][#D.byInstanceBoss[raid.name] + 1] = boss
+    end
+end
+
+-- Raid NPC IDs
+local raidNpcIDs = {
+    -- The Voidspire
+    [240435] = "Imperator Averzian",
+    [240434] = "Vorasius",
+    [240432] = "Fallen-King Salhadaar",
+    [242056] = "Vaelgor & Ezzorak",  -- Vaelgor
+    [244552] = "Vaelgor & Ezzorak",  -- Ezzorak
+    [250588] = "Lightblinded Vanguard",  -- Commander Venel Lightblood
+    [250587] = "Lightblinded Vanguard",  -- General Amias Bellamy
+    [244761] = "Crown of the Cosmos",  -- Alleria
+    -- The Dreamrift
+    [256116] = "Chimaerus",
+    -- March on Quel'Danas
+    [240387] = "Belo'ren",
+}
+for npcID, bossName in pairs(raidNpcIDs) do
+    local boss = D.byName[bossName:lower():gsub("%s+", "")]
+    if boss then
+        D.byNpcID[npcID] = boss
+    end
+end
+-- Dungeon and delve NPC IDs populated by DungeonData.lua and DelveData.lua

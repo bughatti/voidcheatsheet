@@ -1,9 +1,11 @@
 ## Interface: 120001
 ## Title: VoidCheatSheet
-## Notes: Raid boss cheat sheets — shows mechanics, tips, and role-specific notes in-game
+## Notes: Boss & dungeon cheat sheets — mechanics, tips, and role-specific notes for raids, M+ dungeons, and delves
 ## Author: VoidUI
-## Version: 1.0.0
+## Version: 2.0.0
 ## SavedVariables: VoidCheatSheetDB
 
 Data.lua
+DungeonData.lua
+DelveData.lua
 VoidCheatSheet.lua
