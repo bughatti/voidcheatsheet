@@ -53,6 +53,87 @@ local function GetPlayerRole()
 end
 
 ----------------------------------------------------------------------
+-- Boss portrait + tank swap helpers
+----------------------------------------------------------------------
+local portraitCache = {}  -- [encounterID] = "texturePath"
+
+local function GetBossPortraitIcon(boss)
+    if not boss or not boss.encounterID then return nil end
+    local eid = boss.encounterID
+    if portraitCache[eid] ~= nil then
+        return portraitCache[eid] or nil  -- may be cached as false
+    end
+
+    local iconImage
+    local ok = pcall(function()
+        if EJ_SelectInstance and boss.instanceID then
+            pcall(EJ_SelectInstance, boss.instanceID)
+        end
+        if EJ_SelectEncounter then
+            pcall(EJ_SelectEncounter, eid)
+        end
+        local _, _, _, _, img = EJ_GetCreatureInfo(1, eid)
+        iconImage = img
+    end)
+
+    portraitCache[eid] = iconImage or false
+    if ok and iconImage and iconImage ~= "" then
+        return iconImage
+    end
+    return nil
+end
+
+local function SetBossPortrait(hostFrame, boss)
+    if not hostFrame or not hostFrame.portrait then return false end
+    local icon = boss and GetBossPortraitIcon(boss)
+    if icon then
+        hostFrame.portrait:SetTexture(icon)
+        hostFrame.portrait:Show()
+        if hostFrame.title and hostFrame._titleAnchorPortrait then
+            local a = hostFrame._titleAnchorPortrait
+            hostFrame.title:ClearAllPoints()
+            hostFrame.title:SetPoint(a.point, a.x, a.y)
+        end
+        return true
+    else
+        hostFrame.portrait:Hide()
+        if hostFrame.title and hostFrame._titleAnchor then
+            local a = hostFrame._titleAnchor
+            hostFrame.title:ClearAllPoints()
+            hostFrame.title:SetPoint(a.point, a.x, a.y)
+        end
+        return false
+    end
+end
+
+local TS_TRIGGER_LABELS = {
+    stacks   = "STACKS",
+    cast     = "PER CAST",
+    rotation = "ROTATION",
+    mechanic = "MECHANIC",
+}
+
+local function FormatTankSwapLine(ts, compact)
+    if not ts then return nil end
+    local tag = TS_TRIGGER_LABELS[ts.trigger] or "SWAP"
+    local head
+    if ts.trigger == "stacks" and ts.stacks then
+        head = "TANK SWAP (" .. tag .. "): " .. ts.stacks .. " stacks of " .. (ts.debuff or "?")
+    elseif ts.debuff then
+        head = "TANK SWAP (" .. tag .. "): " .. ts.debuff
+    else
+        head = "TANK SWAP (" .. tag .. ")"
+    end
+    if compact then
+        return "|cFFFF4444" .. head .. "|r"
+    end
+    if ts.note then
+        return "|cFFFF4444" .. head .. "|r\n  |cFFC7C7D0" .. ts.note .. "|r"
+    end
+    return "|cFFFF4444" .. head .. "|r"
+end
+
+----------------------------------------------------------------------
 -- Main Frame (full panel)
 ----------------------------------------------------------------------
 local frame
@@ -163,12 +244,21 @@ local function CreateCheatFrame()
         GameTooltip:Hide()
     end)
 
+    -- Boss portrait (optional, set via SetBossPortrait)
+    local portrait = f:CreateTexture(nil, "ARTWORK")
+    portrait:SetSize(40, 40)
+    portrait:SetPoint("TOPLEFT", 8, -4)
+    portrait:Hide()
+    f.portrait = portrait
+
     -- Title
     local title = f:CreateFontString(nil, "OVERLAY")
     title:SetFont(FONT, 14, "OUTLINE")
     title:SetPoint("TOPLEFT", 12, -8)
     title:SetTextColor(0, 0.78, 1)
     f.title = title
+    f._titleAnchor = { point = "TOPLEFT", x = 12, y = -8 }
+    f._titleAnchorPortrait = { point = "TOPLEFT", x = 54, y = -8 }
 
     -- Scroll frame
     local sf = CreateFrame("ScrollFrame", nil, f)
@@ -246,7 +336,7 @@ local function CreateTooltipFrame()
 
     local f = CreateFrame("Frame", "VoidCheatSheetTooltip", UIParent, "BackdropTemplate")
     f:SetSize(300, 120)
-    f:SetPoint("TOP", UIParent, "TOP", 300, -80)
+    f:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -20, -200)
     f:SetFrameStrata("HIGH")
     f:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
     f:SetBackdropColor(0.05, 0.05, 0.07, 0.92)
@@ -269,12 +359,21 @@ local function CreateTooltipFrame()
             VoidCheatSheetDB.tooltipPos.x, VoidCheatSheetDB.tooltipPos.y)
     end
 
+    -- Boss portrait (optional)
+    local portrait = f:CreateTexture(nil, "ARTWORK")
+    portrait:SetSize(28, 28)
+    portrait:SetPoint("TOPLEFT", 6, -4)
+    portrait:Hide()
+    f.portrait = portrait
+
     -- Title
     local title = f:CreateFontString(nil, "OVERLAY")
     title:SetFont(FONT, 12, "OUTLINE")
     title:SetPoint("TOPLEFT", 8, -6)
     title:SetTextColor(0, 0.78, 1)
     f.title = title
+    f._titleAnchor = { point = "TOPLEFT", x = 8, y = -6 }
+    f._titleAnchorPortrait = { point = "TOPLEFT", x = 40, y = -6 }
 
     -- "Click for full" hint
     local hint = f:CreateFontString(nil, "OVERLAY")
@@ -308,6 +407,9 @@ local function CreateTooltipFrame()
 end
 
 local function ShowTooltip(boss)
+    -- Hide full panel when showing tooltip
+    if frame and frame:IsShown() then frame:Hide() end
+
     local f = CreateTooltipFrame()
     f.currentBoss = boss
 
@@ -321,11 +423,18 @@ local function ShowTooltip(boss)
         typeTag = C_RED .. "[Raid] " .. "|r"
     end
 
+    SetBossPortrait(f, boss)
     f.title:SetText(typeTag .. C_CYAN .. boss.name .. "|r")
 
-    -- Build compact body: TL;DR + role tip
+    -- Build compact body: TL;DR + tank swap (if tank) + role tip
     local lines = {}
     lines[#lines + 1] = C_GOLD .. "TL;DR:|r " .. C_WHITE .. boss.tldr .. "|r"
+    if boss.tankSwap then
+        local ts = FormatTankSwapLine(boss.tankSwap, (playerRole ~= "tank"))
+        if ts then
+            lines[#lines + 1] = ts
+        end
+    end
     lines[#lines + 1] = ""
     local tip = boss[playerRole]
     if tip then
@@ -364,6 +473,15 @@ local function BuildCheatText(boss, playerRole)
     end
     L(C_GOLD .. "TL;DR:|r " .. C_WHITE .. boss.tldr .. "|r")
     L("")
+
+    -- Tank swap callout (prominent)
+    if boss.tankSwap then
+        local ts = FormatTankSwapLine(boss.tankSwap, false)
+        if ts then
+            L(ts)
+            L("")
+        end
+    end
 
     -- Bloodlust timing
     if boss.bloodlust then
@@ -470,10 +588,14 @@ end
 -- Show cheat sheet for a boss (full panel)
 ----------------------------------------------------------------------
 function ShowBoss(boss)
+    -- Hide tooltip when showing full panel
+    if tooltipFrame and tooltipFrame:IsShown() then tooltipFrame:Hide() end
+
     local f = CreateCheatFrame()
     local playerRole = GetPlayerRole()
 
     f.currentBoss = boss
+    SetBossPortrait(f, boss)
     f.title:SetText(C_CYAN .. boss.name .. "|r")
     f.content:SetText(BuildCheatText(boss, playerRole))
 
@@ -553,9 +675,72 @@ local function FindInstance(search)
 end
 
 ----------------------------------------------------------------------
+-- Killed boss tracking (raid lockout awareness)
+-- Keyed by encounterID; value = unix timestamp when entry expires.
+----------------------------------------------------------------------
+local function SecondsUntilWeeklyReset()
+    if C_DateAndTime and C_DateAndTime.GetSecondsUntilWeeklyReset then
+        local s = C_DateAndTime.GetSecondsUntilWeeklyReset()
+        if s and s > 0 then return s end
+    end
+    return 604800
+end
+
+local function PurgeExpiredKills()
+    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+    local now = time()
+    for eid, expiry in pairs(VoidCheatSheetDB.killed) do
+        if type(expiry) ~= "number" or expiry <= now then
+            VoidCheatSheetDB.killed[eid] = nil
+        end
+    end
+end
+
+local function IsBossKilled(boss)
+    if not boss or not boss.encounterID then return false end
+    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+    local expiry = VoidCheatSheetDB.killed[boss.encounterID]
+    if not expiry then return false end
+    if expiry <= time() then
+        VoidCheatSheetDB.killed[boss.encounterID] = nil
+        return false
+    end
+    return true
+end
+
+local function MarkBossKilled(encounterID)
+    if not encounterID then return end
+    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+    VoidCheatSheetDB.killed[encounterID] = time() + SecondsUntilWeeklyReset()
+end
+
+local function SyncKillsFromLockouts()
+    PurgeExpiredKills()
+    local n = GetNumSavedInstances and GetNumSavedInstances() or 0
+    if n <= 0 then return end
+    for i = 1, n do
+        local ok, _, _, _, _, locked, _, _, _, _, _, numEnc = pcall(GetSavedInstanceInfo, i)
+        if ok and locked and numEnc and numEnc > 0 then
+            for j = 1, numEnc do
+                local infoOk, bossName, _, isKilled = pcall(GetSavedInstanceEncounterInfo, i, j)
+                if infoOk and isKilled and bossName then
+                    local boss = D.byExactName and D.byExactName[bossName]
+                    if boss and boss.encounterID then
+                        MarkBossKilled(boss.encounterID)
+                    end
+                end
+            end
+        end
+    end
+end
+
+----------------------------------------------------------------------
 -- Show all bosses for an instance (raid, dungeon, or delve)
 ----------------------------------------------------------------------
 local function ShowInstance(inst, instType)
+    -- Hide tooltip when showing full panel
+    if tooltipFrame and tooltipFrame:IsShown() then tooltipFrame:Hide() end
+
     local f = CreateCheatFrame()
     local playerRole = GetPlayerRole()
 
@@ -566,6 +751,7 @@ local function ShowInstance(inst, instType)
         typeTag = C_PURPLE .. "[Delve] " .. "|r"
     end
 
+    SetBossPortrait(f, nil)
     f.title:SetText(typeTag .. C_CYAN .. inst.name .. "|r")
     f.currentBoss = nil
 
@@ -581,13 +767,26 @@ local function ShowInstance(inst, instType)
 
     local bossList = inst.bosses or inst.encounters
     if bossList then
+        if instType == "raid" then PurgeExpiredKills() end
+        local killedBosses = {}
         for _, boss in ipairs(bossList) do
-            L(C_CYAN .. "==============================|r")
-            L(C_CYAN .. "Boss " .. (boss.order or "") .. ": " .. boss.name .. "|r")
-            L(C_CYAN .. "==============================|r")
-            L("")
-            L(BuildCheatText(boss, playerRole))
-            L("")
+            if instType == "raid" and IsBossKilled(boss) then
+                killedBosses[#killedBosses + 1] = boss
+            else
+                L(C_CYAN .. "==============================|r")
+                L(C_CYAN .. "Boss " .. (boss.order or "") .. ": " .. boss.name .. "|r")
+                L(C_CYAN .. "==============================|r")
+                L("")
+                L(BuildCheatText(boss, playerRole))
+                L("")
+                L("")
+            end
+        end
+        if #killedBosses > 0 then
+            L(C_DIM .. "--- Already killed this week ---|r")
+            for _, boss in ipairs(killedBosses) do
+                L(C_DIM .. "  ✓ " .. (boss.order or "") .. ". " .. boss.name .. "|r")
+            end
             L("")
         end
     end
@@ -604,6 +803,7 @@ end
 ----------------------------------------------------------------------
 local function ShowBossList()
     local f = CreateCheatFrame()
+    SetBossPortrait(f, nil)
     f.title:SetText(C_CYAN .. "VoidCheatSheet — Content Guide|r")
     f.currentBoss = nil
 
@@ -615,12 +815,25 @@ local function ShowBossList()
 
     -- Raids
     if D.raids and #D.raids > 0 then
+        PurgeExpiredKills()
         L(C_RED .. "== RAIDS ==|r")
         for _, raid in ipairs(D.raids) do
-            L(C_CYAN .. "  " .. raid.name .. "|r")
+            local killedCount, totalCount = 0, #raid.bosses
+            for _, b in ipairs(raid.bosses) do
+                if IsBossKilled(b) then killedCount = killedCount + 1 end
+            end
+            local lockTag = ""
+            if killedCount > 0 then
+                lockTag = "  " .. C_DIM .. "(" .. killedCount .. "/" .. totalCount .. " this week)|r"
+            end
+            L(C_CYAN .. "  " .. raid.name .. "|r" .. lockTag)
             for _, boss in ipairs(raid.bosses) do
-                L("    " .. C_ORANGE .. boss.order .. ". " .. boss.name .. "|r")
-                L("      " .. C_DIM .. boss.tldr .. "|r")
+                if IsBossKilled(boss) then
+                    L("    " .. C_DIM .. "✓ " .. boss.order .. ". " .. boss.name .. "  (killed this week)|r")
+                else
+                    L("    " .. C_ORANGE .. boss.order .. ". " .. boss.name .. "|r")
+                    L("      " .. C_DIM .. boss.tldr .. "|r")
+                end
             end
             L("")
         end
@@ -731,13 +944,66 @@ local function OnTargetChanged()
         end
     end
 
-    -- Method 3: Zone-based detection for single-boss instances (delves)
+    -- Method 3: Proximity-based detection
+    -- Check hardcoded D.bossPositions + user-saved VoidCheatSheetDB.bossPositions
+    if not boss then
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if mapID then
+            local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+            if pos then
+                local px, py = pos:GetXY()
+                local closest, closestDist = nil, 0.05  -- ~5% map distance threshold
+
+                -- Check hardcoded positions
+                if D.bossPositions then
+                    for bossName, bpos in pairs(D.bossPositions) do
+                        if bpos.mapID == mapID then
+                            local dx = px - bpos.x
+                            local dy = py - bpos.y
+                            local dist = math.sqrt(dx * dx + dy * dy)
+                            if dist < closestDist then
+                                closestDist = dist
+                                closest = D.byExactName[bossName]
+                            end
+                        end
+                    end
+                end
+
+                -- Check user-saved positions (from /cs mark)
+                if VoidCheatSheetDB.bossPositions then
+                    for bossName, bpos in pairs(VoidCheatSheetDB.bossPositions) do
+                        if bpos.mapID == mapID then
+                            local dx = px - bpos.x
+                            local dy = py - bpos.y
+                            local dist = math.sqrt(dx * dx + dy * dy)
+                            if dist < closestDist then
+                                closestDist = dist
+                                closest = D.byExactName[bossName]
+                            end
+                        end
+                    end
+                end
+
+                if closest then boss = closest end
+            end
+        end
+    end
+
+    -- Method 4: Zone-based detection
     if not boss then
         local instanceName = GetInstanceInfo()
         if instanceName and D.byInstanceBoss then
             local instBosses = D.byInstanceBoss[instanceName]
             if instBosses and #instBosses == 1 then
+                -- Single boss (delve) — show that boss tooltip
                 boss = instBosses[1]
+            elseif instBosses and #instBosses > 1 then
+                -- Multi-boss instance — show full instance panel
+                local inst, instType = FindInstance(instanceName)
+                if inst then
+                    ShowInstance(inst, instType)
+                end
+                return
             end
         end
     end
@@ -757,8 +1023,9 @@ end
 local function OnEncounterStart(encounterID, encounterName)
     inEncounter = true
 
-    -- Hide tooltip if showing
+    -- Hide both tooltip and full panel
     if tooltipFrame then tooltipFrame:Hide() end
+    if frame then frame:Hide() end
 
     if not autoPopupEnabled then return end
 
@@ -782,8 +1049,15 @@ local function OnEncounterStart(encounterID, encounterName)
     end
 end
 
-local function OnEncounterEnd()
+local function OnEncounterEnd(encounterID, encounterName, difficultyID, groupSize, success)
     inEncounter = false
+
+    -- Mark raid boss killed on success (any difficulty)
+    local killed = (success == 1) or (success == true)
+    if killed and encounterID and D.byEncounterID and D.byEncounterID[encounterID] then
+        MarkBossKilled(encounterID)
+    end
+
     -- Hide tooltip after encounter ends
     if tooltipFrame and tooltipFrame:IsShown() then
         C_Timer.After(3, function()
@@ -799,12 +1073,17 @@ end
 ----------------------------------------------------------------------
 local ef = CreateFrame("Frame")
 ef:RegisterEvent("ADDON_LOADED")
+ef:RegisterEvent("PLAYER_ENTERING_WORLD")
 ef:RegisterEvent("PLAYER_TARGET_CHANGED")
 ef:RegisterEvent("ENCOUNTER_START")
 ef:RegisterEvent("ENCOUNTER_END")
+ef:RegisterEvent("UPDATE_INSTANCE_INFO")
+ef:RegisterEvent("BOSS_KILL")
 ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
         VoidCheatSheetDB = VoidCheatSheetDB or {}
+        VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+        PurgeExpiredKills()
         if VoidCheatSheetDB.autoPopup == false then
             autoPopupEnabled = false
         end
@@ -836,7 +1115,28 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     end
 
     if event == "ENCOUNTER_END" then
-        OnEncounterEnd()
+        -- args: encounterID, encounterName, difficultyID, groupSize, success
+        OnEncounterEnd(arg1, arg2, arg3, arg4, arg5)
+        return
+    end
+
+    if event == "BOSS_KILL" then
+        -- Backup signal (arg1 = encounterID on recent clients)
+        if arg1 and D.byEncounterID and D.byEncounterID[arg1] then
+            MarkBossKilled(arg1)
+        end
+        return
+    end
+
+    if event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_INSTANCE_INFO" then
+        if RequestRaidInfo then RequestRaidInfo() end
+        -- Slight delay: PLAYER_ENTERING_WORLD often fires before lockout data is ready
+        C_Timer.After(2, function()
+            local ok, err = pcall(SyncKillsFromLockouts)
+            if not ok then
+                print(C_RED .. "[VoidCheatSheet] Lockout sync error: " .. tostring(err) .. "|r")
+            end
+        end)
         return
     end
 end)
@@ -900,7 +1200,7 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         end
         if tooltipFrame then
             tooltipFrame:ClearAllPoints()
-            tooltipFrame:SetPoint("TOP", UIParent, "TOP", 300, -80)
+            tooltipFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -20, -200)
         end
         print(C_CYAN .. "VoidCheatSheet|r position/size reset.")
         return
@@ -917,6 +1217,150 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         autoPopupEnabled = false
         VoidCheatSheetDB.autoPopup = false
         print(C_CYAN .. "VoidCheatSheet:|r Auto-popup " .. C_RED .. "disabled|r")
+        return
+    end
+
+    -- /cs mark <bossname> — record current position as a boss location
+    if msg:find("^mark ") then
+        local bossSearch = msg:sub(6)
+        local boss = FindBoss(bossSearch)
+        if not boss then
+            print(C_CYAN .. "VoidCheatSheet:|r Boss not found: " .. bossSearch)
+            return
+        end
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if not mapID then
+            print(C_RED .. "VoidCheatSheet:|r Can't get map ID.")
+            return
+        end
+        local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+        if not pos then
+            print(C_RED .. "VoidCheatSheet:|r Can't get position (not on a map).")
+            return
+        end
+        local x, y = pos:GetXY()
+        local instanceName = GetInstanceInfo()
+
+        VoidCheatSheetDB.bossPositions = VoidCheatSheetDB.bossPositions or {}
+        VoidCheatSheetDB.bossPositions[boss.name] = {
+            mapID = mapID,
+            x = x,
+            y = y,
+            instance = instanceName,
+        }
+        print(C_GREEN .. "VoidCheatSheet:|r Marked " .. C_CYAN .. boss.name .. "|r at " .. format("%.1f, %.1f", x * 100, y * 100) .. " (map " .. mapID .. ", " .. (instanceName or "?") .. ")")
+        return
+    end
+
+    -- /cs marks — list all saved boss positions
+    if msg == "marks" then
+        VoidCheatSheetDB.bossPositions = VoidCheatSheetDB.bossPositions or {}
+        local count = 0
+        for name, pos in pairs(VoidCheatSheetDB.bossPositions) do
+            print(C_CYAN .. name .. "|r — " .. format("%.1f, %.1f", pos.x * 100, pos.y * 100) .. " (map " .. pos.mapID .. ")")
+            count = count + 1
+        end
+        if count == 0 then
+            print(C_DIM .. "No boss positions marked. Use /cs mark <bossname> while near a boss.|r")
+        end
+        return
+    end
+
+    -- /cs scan — detect nearest boss by proximity and show tooltip
+    if msg == "scan" then
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if not mapID then
+            print(C_CYAN .. "VoidCheatSheet:|r Can't get map position.")
+            return
+        end
+        local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+        if not pos then
+            print(C_CYAN .. "VoidCheatSheet:|r Can't get position on this map.")
+            return
+        end
+        local px, py = pos:GetXY()
+        local closest, closestDist, closestName = nil, 999, nil
+
+        -- Check hardcoded + user-saved positions
+        local allPositions = {}
+        if D.bossPositions then
+            for k, v in pairs(D.bossPositions) do allPositions[k] = v end
+        end
+        if VoidCheatSheetDB.bossPositions then
+            for k, v in pairs(VoidCheatSheetDB.bossPositions) do allPositions[k] = v end
+        end
+
+        for bossName, bpos in pairs(allPositions) do
+            if bpos.mapID == mapID then
+                local dx = px - bpos.x
+                local dy = py - bpos.y
+                local dist = math.sqrt(dx * dx + dy * dy)
+                if dist < closestDist then
+                    closestDist = dist
+                    closest = D.byExactName[bossName]
+                    closestName = bossName
+                end
+            end
+        end
+
+        if closest and closestDist < 0.15 then
+            print(C_CYAN .. "VoidCheatSheet:|r Nearest boss: " .. C_GREEN .. closestName .. "|r (" .. format("%.0f%%", closestDist * 100) .. " away)")
+            ShowTooltip(closest)
+        else
+            -- No proximity match — show instance guide instead
+            local instanceName = GetInstanceInfo()
+            if instanceName then
+                local inst, instType = FindInstance(instanceName)
+                if inst then
+                    print(C_CYAN .. "VoidCheatSheet:|r No boss nearby (map " .. mapID .. "). Showing instance guide.")
+                    ShowInstance(inst, instType)
+                    return
+                end
+            end
+            print(C_CYAN .. "VoidCheatSheet:|r No boss positions for this map (ID: " .. mapID .. "). Use /cs mark <boss> to save positions.")
+        end
+        return
+    end
+
+    -- /cs killed — list bosses marked killed this week
+    if msg == "killed" or msg == "locks" or msg == "lockouts" then
+        PurgeExpiredKills()
+        VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+        local count = 0
+        local now = time()
+        for eid, expiry in pairs(VoidCheatSheetDB.killed) do
+            local boss = D.byEncounterID and D.byEncounterID[eid]
+            local name = (boss and boss.name) or ("encounterID " .. tostring(eid))
+            local hoursLeft = math.max(0, math.floor((expiry - now) / 3600))
+            print(C_DIM .. "  ✓ |r" .. C_CYAN .. name .. "|r " .. C_DIM .. "(resets in " .. hoursLeft .. "h)|r")
+            count = count + 1
+        end
+        if count == 0 then
+            print(C_CYAN .. "VoidCheatSheet:|r No bosses marked killed this week.")
+        else
+            print(C_CYAN .. "VoidCheatSheet:|r " .. count .. " boss(es) killed this week. " .. C_DIM .. "/cs unkill to clear.|r")
+        end
+        return
+    end
+
+    -- /cs unkill — clear all killed markers
+    if msg == "unkill" or msg == "clearkilled" then
+        VoidCheatSheetDB.killed = {}
+        print(C_CYAN .. "VoidCheatSheet:|r Cleared all killed-boss markers.")
+        return
+    end
+
+    -- /cs sync — re-sync killed list from server lockout data
+    if msg == "sync" then
+        if RequestRaidInfo then RequestRaidInfo() end
+        C_Timer.After(1, function()
+            local ok, err = pcall(SyncKillsFromLockouts)
+            if ok then
+                print(C_CYAN .. "VoidCheatSheet:|r Synced killed bosses from lockouts.")
+            else
+                print(C_RED .. "VoidCheatSheet sync error: " .. tostring(err) .. "|r")
+            end
+        end)
         return
     end
 

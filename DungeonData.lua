@@ -767,6 +767,35 @@ for _, dungeon in ipairs(D.dungeons) do
 end
 
 ----------------------------------------------------------------------
+-- Boss positions for proximity detection (from Wowhead zone maps)
+----------------------------------------------------------------------
+-- Magisters' Terrace (zone 15829)
+D.bossPositions["Seranel Sunlash"]          = { mapID = 15829, x = 0.558, y = 0.333 }
+D.bossPositions["Gemellus"]                 = { mapID = 15829, x = 0.459, y = 0.657 }
+D.bossPositions["Degentrius"]               = { mapID = 15829, x = 0.502, y = 0.504 }
+-- Maisara Caverns (zone 16395)
+D.bossPositions["Muro'jin & Nekraxx"]       = { mapID = 16395, x = 0.522, y = 0.686 }
+D.bossPositions["Vordaza"]                  = { mapID = 16395, x = 0.777, y = 0.590 }
+D.bossPositions["Rak'tul, Vessel of Souls"] = { mapID = 16395, x = 0.777, y = 0.100 }
+-- Windrunner Spire (zone 15808)
+D.bossPositions["Emberdawn"]                = { mapID = 15808, x = 0.831, y = 0.507 }
+D.bossPositions["Derelict Duo"]             = { mapID = 15808, x = 0.524, y = 0.885 }
+D.bossPositions["Commander Kroluk"]         = { mapID = 15808, x = 0.704, y = 0.514 }
+D.bossPositions["The Restless Heart"]       = { mapID = 15808, x = 0.674, y = 0.535 }
+-- Seat of the Triumvirate (zone 8910)
+D.bossPositions["Zuraal the Ascended"]      = { mapID = 8910, x = 0.246, y = 0.726 }
+D.bossPositions["Saprish"]                  = { mapID = 8910, x = 0.305, y = 0.367 }
+D.bossPositions["Viceroy Nezhar"]           = { mapID = 8910, x = 0.501, y = 0.166 }
+D.bossPositions["L'ura"]                    = { mapID = 8910, x = 0.621, y = 0.332 }
+-- Algeth'ar Academy (zone 14032)
+D.bossPositions["Overgrown Ancient"]        = { mapID = 14032, x = 0.563, y = 0.417 }
+D.bossPositions["Crawth"]                   = { mapID = 14032, x = 0.467, y = 0.369 }
+D.bossPositions["Vexamus"]                  = { mapID = 14032, x = 0.303, y = 0.357 }
+D.bossPositions["Echo of Doragosa"]         = { mapID = 14032, x = 0.617, y = 0.606 }
+-- Skyreach (zone 6988) — partial data
+D.bossPositions["Ranjit"]                   = { mapID = 6988, x = 0.633, y = 0.385 }
+
+----------------------------------------------------------------------
 -- NPC ID → Boss lookup (bypasses WoW 12.0 tainted strings)
 ----------------------------------------------------------------------
 local dungeonNpcIDs = {

@@ -38,6 +38,7 @@ D.raids = {
                     { name = "Pitch Bulwark", desc = "Cast by Shadowguard Stalwarts/Annihilators. Damage shield that must be interrupted." },
                 },
                 addPriority = "1) Abyssal Voidshaper -- kill before 100 energy or tile is claimed; use Umbral Collapse soak. 2) Shadowguard Stalwart / Annihilator -- interrupt Pitch Bulwark (damage shield). 3) Voidmaws -- prevent from reaching portals at sub-35% HP (they heal via Dark Resilience).",
+                tankSwap = { trigger = "stacks", debuff = "Blackening Wounds", stacks = "8-10", note = "4% max HP reduction per stack, 20s duration. Adds prefer tank with highest stacks." },
                 tank = "Swap at 8-10 stacks of Blackening Wounds. Keep boss away from claimed tiles (Imperator's Glory = 75% damage + 90% damage reduction). Position adds for cleave. Manage add aggro -- adds prefer highest-stack tank.",
                 healer = "Constant rot from Dark Upheaval requires sustained throughput. Burst healing needed during Umbral Collapse soaks. Healing intensity increases as fight progresses (more adds, more claimed tiles).",
                 dps = "Priority: Voidshaper > Stalwart/Annihilator > Voidmaws > Boss. Interrupt Pitch Bulwark on Stalwarts. Stack on soak targets when called. Cleave is strong -- position for multi-target damage.",
@@ -66,6 +67,7 @@ D.raids = {
                     { name = "Overpowering Pulse", desc = "Triggers if NO melee target exists on the boss. Maintain melee uptime at ALL times." },
                     { name = "Gathering Void", desc = "Stacking raid DoT that ramps throughout fight. Makes later Void Breath cycles increasingly dangerous." },
                 },
+                tankSwap = { trigger = "rotation", debuff = "Smashed", stacks = "after 2 slams", note = "Tank 1 takes first 2 Shadowclaw Slams = 300% phys dmg taken for 2min. Tank 2 handles rest of cycle until Tank 1's debuff expires." },
                 tank = "Tank 1 takes first 2 Shadowclaw Slams with defensive cooldowns (gets Smashed to 300%). Tank 1 plays safe for 2 minutes while debuff expires. Tank 2 soaks every other smash circle during this period. ALWAYS keep at least one tank in melee (Overpowering Pulse). Swap cleanly between slam phases.",
                 healer = "Manage ramping Primordial Power/Gathering Void damage. Burst healing during Blisterburst detonations. Plan cooldowns for final Void Breath cycles (highest damage). Constant healing pressure increases each cycle.",
                 dps = "Guide Blistercreeps to walls -- positioning > raw damage. Kill adds ON the walls, not randomly. Avoid Aftershock rings. Maintain melee uptime on boss to prevent Overpowering Pulse. Use knockbacks/grips to position creeps on walls.",
@@ -96,6 +98,7 @@ D.raids = {
                     { name = "Twisting Obscurity", desc = "Unavoidable raid-wide damage jumping between players. Applies 23-second damage-over-time effect." },
                     { name = "Destabilizing Strikes", desc = "Tank debuff. Boss melee attacks apply stacking shadow DoT lasting 15 seconds. Tank swap when stacks become dangerous." },
                 },
+                tankSwap = { trigger = "stacks", debuff = "Destabilizing Strikes", stacks = "~8 or on drop", note = "Shadow DoT every 1s for 15s, stacks on melee hits. Swap at ~8 stacks or let debuff fall off before returning." },
                 tank = "Kite boss toward marked gates (where orbs spawn) for faster kills. Aim Shattering Twilight spikes away from raid. Swap on Destabilizing Strikes stacks. Position boss off-center before Entropic Unraveling for beam dodge space. Position boss near edge before intermission to preserve central space.",
                 healer = "Handle rot from Galactic Miasma + burst from Dark Radiation. Despotic Command absorb shields need fast healing. Save major cooldowns for Entropic Unraveling (heavy raid damage). Dispel timing on Despotic Command is critical.",
                 dps = "Priority: Orbs > Fractured Images > Boss. Kill closest orb to boss first. Stagger orb kills (8 seconds apart). CC/interrupt Fractured Images IMMEDIATELY. Don't kill orbs too fast (Dark Radiation stacking).",
@@ -129,6 +132,7 @@ D.raids = {
                     { name = "Twilight Fury", desc = "If one dragon dies while the other lives: surviving dragon gains massive damage increase. Kill both within seconds of each other." },
                     { name = "Midnight Flames (Intermission)", desc = "Both dragons fly up. Unavoidable raid-wide damage. Players MUST stack inside Radiant Barrier in room center. Manifestation of Midnight spawns -- must be killed quickly. Manifestation gains stat escalation every 30 seconds. If not killed fast: Unbound Shadow ramps and wipes raid." },
                 },
+                tankSwap = { trigger = "cast", debuff = "Gloom", note = "Swap after each Gloom cast. Keep dragons 15+ yards apart (Twilight Bond) — never drag bosses through each other." },
                 tank = "Tank dragons 15+ yards apart (Twilight Bond). Swap after Gloom cast (don't drag bosses). Face Nullbeam away from raid. Vaelwing resets on swap; Rakfang resets on swap. Point Impale (after Rakfang) away from raid. During intermission: pick up Manifestation.",
                 healer = "Burst healing during Nullzone tether breaks. Sustained pressure from Gloomtouched/Diminish debuffs. Heavy cooldown coordination during Midnight Flames intermission. Healing absorbs from Rakfang need attention.",
                 dps = "BALANCE damage between both dragons (within 10% HP). Kill Voidorbs fast (interrupt Voidbolt). Soak Gloom orbs (up to 5 players) to minimize puddle size. Manage Diminish stacks -- don't over-soak. During intermission: kill Manifestation of Midnight FAST.",
@@ -171,6 +175,7 @@ D.raids = {
                     { name = "Retribution (Wipe Mechanic)", desc = "If one boss dies too early: survivors gain Retribution. Stacking 5% damage increase per stack. Quickly becomes unhealable. ALL THREE must die at roughly the same time." },
                     { name = "Consecration Puddles", desc = "Each ultimate leaves a permanent Consecration puddle. Position boss at arena EDGES before they hit 100 energy. Central space must be preserved." },
                 },
+                tankSwap = { trigger = "mechanic", debuff = "Judgment → finisher", note = "Precise taunt swap during Judgment → finisher sequence for BOTH Venel and Bellamy. Prevent aura overlap at all costs." },
                 tank = "Manage THREE bosses' positioning simultaneously. Prevent aura overlap at all costs. Execute precise taunt swaps during Judgment -> finisher sequences for BOTH Venel and Bellamy. Move boss approaching 100 energy to arena edge (Consecration puddle placement). Pick up adds/Sacred Shield breaks.",
                 healer = "Burst healing for Execution Sentence soaks. Sustained pressure from Tyr's Wrath absorbs. Raid-wide damage from Light Infused increases each ultimate. Cooldown rotation during aura windows. Dispel Avenger's Shield targets.",
                 dps = "Maintain EVEN cleave damage across all three bosses. Prioritize Sacred Shield destruction on Senn (break before Blinding Light). Interrupt Blinding Light immediately after shield breaks. Don't overcommit to single targets (Retribution stacking). Hero on pull, start on Venel, cleave after 8s bubble expires.",
@@ -221,6 +226,7 @@ D.raids = {
                     { name = "Devouring Cosmos (P3)", desc = "Drops void puddle covering current slice, preventing healing inside. HARD ENRAGE after three casts covering entire platform. This is the DPS check." },
                     { name = "Dark Rush (P3)", desc = "Feather granting glide ability to reach next slice when jumping. Applies 12-second damage effect. Use to escape Devouring Cosmos coverage." },
                 },
+                tankSwap = { trigger = "stacks", debuff = "Rift Slash (Phase 2)", stacks = "2-3", note = "Phase 2 only. Phase 1 is split-tank (Morium permanent / other on Demair+Vorelus). Phase 3: tank breaks Aspect of the End LAST." },
                 tank = "Phase 1: One tank on Morium permanently, other on Demair/Vorelus. Keep sentinels in melee (Echoing Darkness). Phase 2: Swap at 2-3 Rift Slash stacks. Phase 3: Coordinate Aspect of the End break order (tank breaks LAST).",
                 healer = "One of the most demanding healing fights in the tier. Phase 1: Null Corona absorbs, rot from multiple sources. Intermissions: heavy cooldown windows. Phase 3: Sustained Aspect of the End damage + Devouring Cosmos coverage reducing healing. Cooldown planning across ALL phases essential.",
                 dps = "Phase 1: Sentinels > Droplets > Boss in kill order (Demair -> Vorelus -> Morium). Phase 2: Voidspawns > Simulacrum > Boss; interrupt Void Barrage. Phase 3: PURE BURN -- hard enrage after 3 Devouring Cosmos. Delayed add kills cause exponential damage escalation. Strict priority targeting is MANDATORY.",
@@ -267,6 +273,7 @@ D.raids = {
                     { name = "Ravenous Dive (Air Phase)", desc = "Boss crashes into arena center. Knocks up entire raid. Consumes ALL remaining adds. Each consumed add: heals boss 500% of remaining health + 50% damage increase (stacking). ALL adds MUST die before Ravenous Dive. Returns to Phase 1." },
                 },
                 addPriority = "Shadow Realm: Break Alnshroud shields on Manifestations, pull to edges. Normal Realm: 1) Colossal Horror (tank focus, escalating Roar). 2) Haunting Essence (interrupt Fearsome Cry). 3) Swarming Shades (minor, quick kill). ABSOLUTE PRIORITY: if ANY add is active in Normal Realm, ALL DPS stop attacking boss immediately.",
+                tankSwap = { trigger = "mechanic", debuff = "Alndust Upheaval / Rending Tear bleed", note = "Swap after Alndust Upheaval cast, or when Rending Tear bleed stacks become dangerous. Rending Tear bleeds for 6s, 1.5s tick." },
                 tank = "Swap after Alndust Upheaval or after significant Rending Tear bleed buildup. Face Rending Tear away from raid. In Shadow Realm: pull adds to room edges before breaking shields. Colossal Horror requires tank focus-targeting. Maintain facing consistency.",
                 healer = "Continuous Caustic Phlegm DoT management. Prioritize Rift Sickness healing absorbs immediately. Heroic: coordinate Consuming Miasma dispel timing (run to puddles first). Cooldown rotation for intermission phase. Burst healing when adds die near boss (if any reach).",
                 dps = "If add gets close to boss: STOP ALL BOSS DPS, kill add instantly. Shadow Realm: break Manifestation shields. Normal Realm: kill fixated adds before reaching boss. Mandatory interrupt rotation for Fearsome Cry. Use displacement tools proactively (grips, knockbacks, roots, slows).",
@@ -315,6 +322,7 @@ D.raids = {
                     { name = "Pinwheel Dance / Incubation of Flames", desc = "Rotating beams emit from egg. Players must rotate within matching-color slice. Incorrect positioning in wrong-color slice = lethal. Continue clearing Radiant Echoes during this phase." },
                     { name = "Ashen Benediction (Soft Enrage)", desc = "Permanent debuff applied each rebirth: -10% healing per stack. Extended fights become unhealable. Insufficient Egg-phase DPS extends encounter and accelerates difficulty." },
                 },
+                tankSwap = { trigger = "rotation", debuff = "Light/Void Edict", note = "3-step rotation: Light tank soaks Light Edict → immediate swap → Void tank soaks Void Edict. Heroic: split Voidlight Edict (Void left, Light right). Tanks always hold opposite color feathers." },
                 tank = "Execute rigid 3-step Edict sequence flawlessly. Light tank soaks Light Edict, immediate swap, Void tank soaks Void Edict. Heroic: both tanks split Voidlight Edict (Void left, Light right). Post-Edict: heavy mitigation required for 5 melee hits. Minimize unnecessary movement. Tanks always have opposite color feathers.",
                 healer = "Prioritize Eternal Burns absorb-clearing over general raid healing. Coordinate cooldowns during high-pressure overlap phases. Healing becomes progressively harder due to Ashen Benediction stacking. Burst-heal absorb shields IMMEDIATELY (delay = death).",
                 dps = "Add priority: Small Phoenix Eggs > Ember Phoenixes > Boss. Correct target selection outweighs uptime. SAVE COOLDOWNS for Phase 2 Egg burn. Clear Radiant Echo orbs matching your color to create paths for teammates. Intercept Infused Quills for matching-color allies.",
@@ -369,6 +377,7 @@ D.raids = {
                     { name = "Heaven & Hell (Mythic P4)", desc = "A single player targeted becomes anchor for slow-moving, persistent void-tornado. NO DURATION -- follows target for remainder of encounter or until target dies. Tornado gradually consumes arena space. Multiple tornadoes accumulate as fight progresses." },
                     { name = "The Last Light (Mythic P4)", desc = "Constant Sha waves that must be cleared. Last Light bearers critical to keep alive." },
                 },
+                tankSwap = { trigger = "stacks", debuff = "Impaled (Phase 1)", stacks = "5", note = "Phase 1: Heaven's Lance applies Impaled stacks — swap at 5. Tank L'ura where she stands for consistent Death's Dirge laser reference (rotates clockwise from tank)." },
                 tank = "Phase 1: Swap after Heaven's Lance at 5 Impaled stacks. Tank L'ura where she stands for consistent Death's Dirge reference (laser rotates clockwise from tank). Phase 2: Manage positioning around Void Cores. Phase 3: Position within crystal safe zones. Phase 4 (Mythic): Keep L'ura centered; avoid forcing Heaven & Hell carrier through melee.",
                 healer = "Manage throughput during constant rot phases (Shattered Sky, Abyssal Pool, Thunderous Well). Save major cooldowns for intermission (Total Eclipse). Phase 2: Galvanize beam soak healing. Phase 3: Triage between crystal-zone healing and Light Siphon soaks. Phase 4 (Mythic): Simultaneously triage transition damage, Shattered Sky, Sha contact damage, and Heaven & Hell carrier. Heal Dusk Crystals to full to create Dawn Crystals (Phase 1). Pre-assign crystal holders -- keep them alive at all costs.",
                 dps = "Phase 1: Interrupt Safeguard Matrix adds; kill Midnight Crystals before Cosmic Fracture. Phase 2: Focus Void Core elimination; soak Galvanize beams. Phase 3: Pure burn -- race against Dark Archangel / Light Siphon mechanics. Phase 4 (Mythic): Maximum burn -- no mechanics to handle beyond staying alive. Interrupt discipline throughout entire fight.",
@@ -480,6 +489,8 @@ for eid, bossName in pairs(raidEncounterIDs) do
     local boss = D.byName[bossName:lower():gsub("%s+", "")]
     if boss then
         D.byEncounterID[eid] = boss
+        boss.encounterID = eid
+        boss.raidEncounter = true
     end
 end
 
@@ -506,3 +517,18 @@ for npcID, bossName in pairs(raidNpcIDs) do
     end
 end
 -- Dungeon and delve NPC IDs populated by DungeonData.lua and DelveData.lua
+
+----------------------------------------------------------------------
+-- Boss positions for proximity detection (bypasses WoW 12.0 taint)
+-- Coordinates from Wowhead zone maps (0-100 scale, converted to 0-1)
+----------------------------------------------------------------------
+D.bossPositions = {}
+
+-- The Voidspire (zone 16340)
+local voidspireMap = 2912  -- instance mapID, may need adjustment in-game
+D.bossPositions["Imperator Averzian"]     = { mapID = voidspireMap, x = 0.398, y = 0.685 }
+D.bossPositions["Vorasius"]               = { mapID = voidspireMap, x = 0.425, y = 0.352 }
+D.bossPositions["Fallen-King Salhadaar"]  = { mapID = voidspireMap, x = 0.656, y = 0.764 }
+D.bossPositions["Vaelgor & Ezzorak"]      = { mapID = voidspireMap, x = 0.554, y = 0.460 }
+D.bossPositions["Lightblinded Vanguard"]  = { mapID = voidspireMap, x = 0.758, y = 0.173 }
+D.bossPositions["Crown of the Cosmos"]    = { mapID = voidspireMap, x = 0.472, y = 0.513 }
