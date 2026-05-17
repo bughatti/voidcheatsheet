@@ -1179,6 +1179,7 @@ end
 SLASH_VOIDCHEATSHEET1 = "/cs"
 SLASH_VOIDCHEATSHEET2 = "/cheatsheet"
 SlashCmdList["VOIDCHEATSHEET"] = function(msg)
+    dbg("slash: %s", tostring(msg))
     msg = strtrim(msg):lower()
 
     if msg == "" then
