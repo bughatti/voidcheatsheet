@@ -1,3 +1,6 @@
+-- VoidSpy hook: enable with /vspy enable VoidCheatSheet  (no-op if VoidSpy missing/disabled)
+local function dbg(fmt, ...) if VoidSpy and VoidSpy.Log then VoidSpy:Log("VoidCheatSheet", fmt, ...) end end
+
 ----------------------------------------------------------------------
 -- VoidCheatSheet — In-game boss & dungeon cheat sheets
 -- Shows mechanics, role tips, and TL;DR for raids, M+ dungeons, delves
