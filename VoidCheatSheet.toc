@@ -10,4 +10,5 @@ Data.lua
 DungeonData.lua
 DelveData.lua
 VoidCheatSheet.lua
+Minimap.lua
 VoidHubBundle.lua

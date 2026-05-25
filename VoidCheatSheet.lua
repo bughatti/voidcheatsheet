@@ -1174,6 +1174,18 @@ end
 ----------------------------------------------------------------------
 -- Slash commands
 ----------------------------------------------------------------------
+-- Public Toggle — used by Minimap.lua (and any external caller). Opens the
+-- boss list when no panel is showing; closes both panels otherwise.
+function VoidCheatSheet_Toggle()
+    local anyShown = (frame and frame:IsShown()) or (tooltipFrame and tooltipFrame:IsShown())
+    if anyShown then
+        if frame then frame:Hide() end
+        if tooltipFrame then tooltipFrame:Hide() end
+    else
+        ShowBossList()
+    end
+end
+
 SLASH_VOIDCHEATSHEET1 = "/cs"
 SLASH_VOIDCHEATSHEET2 = "/cheatsheet"
 SlashCmdList["VOIDCHEATSHEET"] = function(msg)
