@@ -44,7 +44,10 @@ local ROLE_LABELS = {
 local function GetPlayerRole()
     local role = "dps"
     pcall(function()
-        local spec = GetSpecialization()
+        -- C_SpecializationInfo.GetSpecialization is the modern (10.x+) path;
+        -- fall back to the global if the namespace isn't yet populated.
+        local getSpec = (C_SpecializationInfo and C_SpecializationInfo.GetSpecialization) or GetSpecialization
+        local spec = getSpec and getSpec()
         if spec then
             local r = GetSpecializationRole(spec)
             if r == "TANK" then role = "tank"
@@ -69,10 +72,17 @@ local function GetBossPortraitIcon(boss)
 
     local iconImage
     local ok = pcall(function()
-        if EJ_SelectInstance and boss.instanceID then
+        -- C_EncounterJournal is the modern (10.x+) namespace; legacy EJ_* globals
+        -- still exist but tend to spam taint in 12.0.5. Prefer the C_ form.
+        local CEJ = C_EncounterJournal
+        if CEJ and CEJ.SetSelectedInstance and boss.instanceID then
+            pcall(CEJ.SetSelectedInstance, boss.instanceID)
+        elseif EJ_SelectInstance and boss.instanceID then
             pcall(EJ_SelectInstance, boss.instanceID)
         end
-        if EJ_SelectEncounter then
+        if CEJ and CEJ.SetSelectedEncounter then
+            pcall(CEJ.SetSelectedEncounter, eid)
+        elseif EJ_SelectEncounter then
             pcall(EJ_SelectEncounter, eid)
         end
         local _, _, _, _, img = EJ_GetCreatureInfo(1, eid)
@@ -588,9 +598,10 @@ local function BuildCheatText(boss, playerRole)
 end
 
 ----------------------------------------------------------------------
--- Show cheat sheet for a boss (full panel)
+-- Show cheat sheet for a boss (full panel) — assignment form binds to
+-- the forward-declared local at the top of the file (avoids global taint).
 ----------------------------------------------------------------------
-function ShowBoss(boss)
+ShowBoss = function(boss)
     -- Hide tooltip when showing full panel
     if tooltipFrame and tooltipFrame:IsShown() then tooltipFrame:Hide() end
 
@@ -701,6 +712,12 @@ end
 
 local function IsBossKilled(boss)
     if not boss or not boss.encounterID then return false end
+    -- Prefer live Blizzard lockout data over SavedVariables when available
+    -- (C_RaidLocks added in 12.0 — instant per-boss query, no SV dependency).
+    if C_RaidLocks and C_RaidLocks.IsEncounterComplete and boss.mapID then
+        local ok, complete = pcall(C_RaidLocks.IsEncounterComplete, boss.mapID, boss.encounterID)
+        if ok and complete then return true end
+    end
     VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
     local expiry = VoidCheatSheetDB.killed[boss.encounterID]
     if not expiry then return false end
@@ -722,7 +739,11 @@ local function SyncKillsFromLockouts()
     local n = GetNumSavedInstances and GetNumSavedInstances() or 0
     if n <= 0 then return end
     for i = 1, n do
-        local ok, _, _, _, _, locked, _, _, _, _, _, numEnc = pcall(GetSavedInstanceInfo, i)
+        -- Returns: name, lockoutID, reset, difficultyID, locked, extended,
+        -- instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress
+        -- numEncounters is slot 11 (the prior implementation read slot 12 = encounterProgress
+        -- bitmask, which produced bogus iteration counts on partially-killed raids).
+        local ok, _, _, _, _, locked, _, _, _, _, numEnc = pcall(GetSavedInstanceInfo, i)
         if ok and locked and numEnc and numEnc > 0 then
             for j = 1, numEnc do
                 local infoOk, bossName, _, isKilled = pcall(GetSavedInstanceEncounterInfo, i, j)
@@ -894,19 +915,28 @@ end
 local inEncounter = false
 local autoPopupEnabled = true
 local tooltipHideTimer = nil
+local syncTimer = nil
+local currentEncounterDifficulty = nil
+local currentEncounterInstanceID = nil
 
-local function OnTargetChanged()
+-- Forward declaration: ShowBoss is referenced by tooltip OnMouseDown closures
+-- (CreateTooltipFrame, around line 400) but defined further down (line 603).
+-- Declaring local here avoids the implicit-global taint pattern.
+local ShowBoss
+
+local function OnTargetChanged(unit)
     if not autoPopupEnabled then return end
 
     -- Don't auto-popup during active encounters (DBM/BigWigs handle combat)
     if inEncounter then return end
 
-    local unit = "target"
+    unit = unit or "target"
     if not UnitExists(unit) then
         -- Target cleared — hide tooltip after short delay
         if tooltipFrame and tooltipFrame:IsShown() then
-            if tooltipHideTimer then tooltipHideTimer:Cancel() end
+            if tooltipHideTimer then tooltipHideTimer:Cancel(); tooltipHideTimer = nil end
             tooltipHideTimer = C_Timer.NewTimer(2, function()
+                tooltipHideTimer = nil
                 if tooltipFrame and not UnitExists("target") then
                     tooltipFrame:Hide()
                 end
@@ -937,12 +967,14 @@ local function OnTargetChanged()
     if not boss then
         local guidOk, guid = pcall(UnitGUID, unit)
         if guidOk and guid then
-            local parseOk, npcID = pcall(function()
-                local id = select(6, strsplit("-", guid))
-                return tonumber(id)
-            end)
-            if parseOk and npcID and D.byNpcID then
-                boss = D.byNpcID[npcID]
+            -- Only Creature/Vehicle/Pet GUIDs have an NPC ID in slot 6.
+            -- Player GUIDs put a realm-relative ID there which can collide.
+            local guidType = strsplit("-", guid)
+            if guidType == "Creature" or guidType == "Vehicle" or guidType == "Pet" then
+                local npcID = tonumber((select(6, strsplit("-", guid))))
+                if npcID and D.byNpcID then
+                    boss = D.byNpcID[npcID]
+                end
             end
         end
     end
@@ -1023,8 +1055,10 @@ local function OnTargetChanged()
     end
 end
 
-local function OnEncounterStart(encounterID, encounterName)
+local function OnEncounterStart(encounterID, encounterName, difficultyID, groupSize, instanceID)
     inEncounter = true
+    currentEncounterDifficulty = difficultyID
+    currentEncounterInstanceID = instanceID
 
     -- Hide both tooltip and full panel
     if tooltipFrame then tooltipFrame:Hide() end
@@ -1055,8 +1089,8 @@ end
 local function OnEncounterEnd(encounterID, encounterName, difficultyID, groupSize, success)
     inEncounter = false
 
-    -- Mark raid boss killed on success (any difficulty)
-    local killed = (success == 1) or (success == true)
+    -- success is documented as a number (0/1); accept both for safety.
+    local killed = success == 1 or success == true
     if killed and encounterID and D.byEncounterID and D.byEncounterID[encounterID] then
         MarkBossKilled(encounterID)
     end
@@ -1078,6 +1112,7 @@ local ef = CreateFrame("Frame")
 ef:RegisterEvent("ADDON_LOADED")
 ef:RegisterEvent("PLAYER_ENTERING_WORLD")
 ef:RegisterEvent("PLAYER_TARGET_CHANGED")
+ef:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 ef:RegisterEvent("ENCOUNTER_START")
 ef:RegisterEvent("ENCOUNTER_END")
 ef:RegisterEvent("UPDATE_INSTANCE_INFO")
@@ -1100,15 +1135,26 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     end
 
     if event == "PLAYER_TARGET_CHANGED" then
-        local ok, err = pcall(OnTargetChanged)
+        local ok, err = pcall(OnTargetChanged, "target")
         if not ok then
             print(C_RED .. "[VoidCheatSheet] Target error: " .. tostring(err) .. "|r")
         end
         return
     end
 
+    if event == "UPDATE_MOUSEOVER_UNIT" then
+        -- Hover-to-preview: cheap, fires often; OnTargetChanged short-circuits on no boss.
+        if UnitExists("mouseover") and not UnitIsPlayer("mouseover") then
+            local ok = pcall(OnTargetChanged, "mouseover")
+            -- Silent on failure; mouseover is high-frequency, don't spam chat.
+            if not ok then end
+        end
+        return
+    end
+
     if event == "ENCOUNTER_START" then
-        local ok, err = pcall(OnEncounterStart, arg1, arg2)
+        -- args: encounterID, encounterName, difficultyID, groupSize, instanceID
+        local ok, err = pcall(OnEncounterStart, arg1, arg2, arg3, arg4, arg5)
         if not ok then
             print(C_RED .. "[VoidCheatSheet] Encounter error: " .. tostring(err) .. "|r")
         end
@@ -1122,8 +1168,11 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     end
 
     if event == "BOSS_KILL" then
-        -- Backup signal (arg1 = encounterID on recent clients)
-        if arg1 and D.byEncounterID and D.byEncounterID[arg1] then
+        -- Backup signal — de-dupe with ENCOUNTER_END. If we just saw the end,
+        -- skip BOSS_KILL to avoid double-marking on Mythic split kills.
+        if inEncounter then return end
+        if arg1 and D.byEncounterID and D.byEncounterID[arg1]
+           and not (VoidCheatSheetDB.killed and VoidCheatSheetDB.killed[arg1]) then
             MarkBossKilled(arg1)
         end
         return
@@ -1131,8 +1180,10 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
 
     if event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_INSTANCE_INFO" then
         if RequestRaidInfo then RequestRaidInfo() end
-        -- Slight delay: PLAYER_ENTERING_WORLD often fires before lockout data is ready
-        C_Timer.After(2, function()
+        -- Debounce: UPDATE_INSTANCE_INFO can fire repeatedly in quick succession.
+        if syncTimer then syncTimer:Cancel() end
+        syncTimer = C_Timer.NewTimer(2, function()
+            syncTimer = nil
             local ok, err = pcall(SyncKillsFromLockouts)
             if not ok then
                 print(C_RED .. "[VoidCheatSheet] Lockout sync error: " .. tostring(err) .. "|r")
@@ -1231,6 +1282,39 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         autoPopupEnabled = false
         VoidCheatSheetDB.autoPopup = false
         print(C_CYAN .. "VoidCheatSheet:|r Auto-popup " .. C_RED .. "disabled|r")
+        return
+    end
+
+    -- /cs scan — dump current target/zone/instance state for data-table verification.
+    -- Use this in Voidspire (or any unverified zone) to capture mapID + NPC IDs
+    -- so hardcoded entries in Data.lua / DungeonData.lua / DelveData.lua can be confirmed.
+    if msg == "scan" then
+        local mapID = C_Map.GetBestMapForUnit("player")
+        local zoneName, instanceType, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
+        print(C_CYAN .. "VoidCheatSheet scan:|r")
+        print(("  Zone: %s  (mapID=%s, instanceType=%s, difficultyID=%s, instanceID=%s)"):format(
+            tostring(zoneName), tostring(mapID), tostring(instanceType), tostring(difficultyID), tostring(instanceID)))
+        if UnitExists("target") then
+            local guid = UnitGUID("target")
+            local guidType, _, _, _, _, npcID = strsplit("-", guid or "")
+            print(("  Target: %s  (npcID=%s, guidType=%s, classification=%s, level=%s)"):format(
+                tostring(UnitName("target")), tostring(npcID), tostring(guidType),
+                tostring(UnitClassification("target")), tostring(UnitLevel("target"))))
+        else
+            print("  Target: none")
+        end
+        if UnitExists("mouseover") then
+            local guid = UnitGUID("mouseover")
+            local guidType, _, _, _, _, npcID = strsplit("-", guid or "")
+            print(("  Mouseover: %s  (npcID=%s, guidType=%s)"):format(
+                tostring(UnitName("mouseover")), tostring(npcID), tostring(guidType)))
+        end
+        if C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo then
+            local level, affixes = C_ChallengeMode.GetActiveKeystoneInfo()
+            if level and level > 0 then
+                print(("  Active M+: level %d, %d affixes"):format(level, affixes and #affixes or 0))
+            end
+        end
         return
     end
 

@@ -3,7 +3,7 @@
 ## Title: VoidCheatSheet
 ## Notes: Boss & dungeon cheat sheets — mechanics, tips, and role-specific notes for raids, M+ dungeons, and delves
 ## Author: VoidUI
-## Version: 2.1.0
+## Version: 2.2.0
 ## SavedVariables: VoidCheatSheetDB
 
 Data.lua

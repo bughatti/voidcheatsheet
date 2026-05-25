@@ -525,7 +525,10 @@ end
 D.bossPositions = {}
 
 -- The Voidspire (zone 16340)
-local voidspireMap = 2912  -- instance mapID, may need adjustment in-game
+-- TODO: 2912 is a placeholder. To verify: enter the raid, run `/cs scan`
+-- inside the instance, and update this value to the printed mapID.
+-- Until verified, proximity-based boss detection inside Voidspire silently fails.
+local voidspireMap = 2912
 D.bossPositions["Imperator Averzian"]     = { mapID = voidspireMap, x = 0.398, y = 0.685 }
 D.bossPositions["Vorasius"]               = { mapID = voidspireMap, x = 0.425, y = 0.352 }
 D.bossPositions["Fallen-King Salhadaar"]  = { mapID = voidspireMap, x = 0.656, y = 0.764 }
