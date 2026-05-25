@@ -1096,8 +1096,6 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
         if D.delves then for _, d in ipairs(D.delves) do count = count + #(d.bosses or d.encounters or {}) end end
         local nameCount = 0
         if D.byName then for _ in pairs(D.byName) do nameCount = nameCount + 1 end end
-        print(C_CYAN .. "VoidCheatSheet|r loaded — " .. count .. " encounters, " .. nameCount .. " name lookups. " .. C_DIM .. "/cs or /cheatsheet|r")
-        print(C_DIM .. "  Raids: " .. (D.raids and #D.raids or 0) .. ", Dungeons: " .. (D.dungeons and #D.dungeons or 0) .. ", Delves: " .. (D.delves and #D.delves or 0) .. "|r")
         return
     end
 
