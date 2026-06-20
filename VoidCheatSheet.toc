@@ -1,0 +1,19 @@
+## Interface: 120007
+## SavedVariablesPerCharacter: VoidHubCharDB
+## Title: VoidCheatSheet
+## Notes: Boss & dungeon cheat sheets — mechanics, tips, and role-specific notes for raids, M+ dungeons, and delves
+## Author: VoidUI
+## Version: 2.2.3
+## SavedVariables: VoidCheatSheetDB
+
+# Embedded VoidLib so users do not need a separate addon download.
+Libs\VoidLib\VoidLib.lua
+Libs\VoidLib\Secrets.lua
+Libs\VoidLib\Logger.lua
+
+Data.lua
+DungeonData.lua
+DelveData.lua
+VoidCheatSheet.lua
+Minimap.lua
+VoidHubBundle.lua
