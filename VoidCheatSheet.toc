@@ -1,7 +1,7 @@
 ## Interface: 120007
 ## SavedVariablesPerCharacter: VoidHubCharDB
 ## Title: VoidCheatSheet
-## Notes: Boss & dungeon cheat sheets — mechanics, tips, and role-specific notes for raids, M+ dungeons, and delves
+## Notes: Boss & dungeon cheat sheets — mechanics, tips, and role-specific notes for raids, M+ dungeons, and delves Discord: https://discord.gg/7ZHmx7zMDh
 ## Author: VoidUI
 ## Version: 2.2.3
 ## SavedVariables: VoidCheatSheetDB
