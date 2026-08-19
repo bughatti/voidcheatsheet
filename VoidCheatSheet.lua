@@ -349,7 +349,9 @@ local function CreateTooltipFrame()
 
     local f = CreateFrame("Frame", "VoidCheatSheetTooltip", UIParent, "BackdropTemplate")
     f:SetSize(300, 120)
-    f:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -20, -200)
+    -- Default LEFT of the objective-tracker column: the old (-20, -200) spot sat directly
+    -- on top of the quest tracker under the minimap. Drag to taste -- position persists.
+    f:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -440, -180)
     f:SetFrameStrata("HIGH")
     f:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
     f:SetBackdropColor(0.05, 0.05, 0.07, 0.92)
@@ -358,12 +360,22 @@ local function CreateTooltipFrame()
     f:SetClampedToScreen(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", f.StartMoving)
+    f:SetScript("OnDragStart", function(self)
+        if IsShiftKeyDown() then self:StartMoving() end   -- SHIFT-drag moves; plain click opens full
+    end)
     f:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
         local point, _, relPoint, x, y = self:GetPoint(1)
         VoidCheatSheetDB.tooltipPos = { point = point, relPoint = relPoint, x = x, y = y }
     end)
+
+    -- One-time migration: saved positions from before the default moved (v2) were mostly
+    -- the old on-top-of-the-tracker spot -- reset once so everyone gets the new default.
+    -- Any drag AFTER this re-saves and persists as usual.
+    if (VoidCheatSheetDB.tooltipPosVer or 1) < 2 then
+        VoidCheatSheetDB.tooltipPos = nil
+        VoidCheatSheetDB.tooltipPosVer = 2
+    end
 
     -- Restore tooltip position
     if VoidCheatSheetDB.tooltipPos then
@@ -392,7 +404,7 @@ local function CreateTooltipFrame()
     local hint = f:CreateFontString(nil, "OVERLAY")
     hint:SetFont(FONT, 9, "")
     hint:SetPoint("TOPRIGHT", -6, -7)
-    hint:SetText(C_DIM .. "click for full|r")
+    hint:SetText(C_DIM .. "click: full - shift-drag: move|r")
     f.hint = hint
 
     -- Body
@@ -407,7 +419,9 @@ local function CreateTooltipFrame()
     f.body = body
 
     f:SetScript("OnMouseDown", function()
-        -- Click to expand to full panel
+        -- Plain click = expand to the full panel. SHIFT = reserved for moving (the old
+        -- behavior opened-and-hid on press, which made the frame impossible to drag).
+        if IsShiftKeyDown() then return end
         if f.currentBoss then
             ShowBoss(f.currentBoss)
             f:Hide()

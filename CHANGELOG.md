@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.1] — 2026-08-19
+
+### Fixed
+- The compact boss popup no longer defaults on top of the quest/objective tracker — it now
+  sits left of the tracker column (one-time position reset applies the new default).
+- **Click** the popup to open the full dungeon panel; **Shift-drag** to move it wherever you
+  like (position is remembered). Previously a click-on-press made the popup impossible to drag.
+
 ## [2.3.0] — 2026-08-19
 
 ### Added
