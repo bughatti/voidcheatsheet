@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.3.0] — 2026-08-19
+
+### Added
+- **The Venomous Abyss (Season 2 raid): all 8 boss cheat sheets** — Nek'zali the Soulcoiler,
+  Entombed Sentinels, The Lost Explorers, Vashnik the Malignant, Sszorak, The Twin Fangs,
+  The Coiled Altar, and Ula'tek. Full TL;DRs, phases, abilities, tank swaps, role tips,
+  positioning, wipe causes, and Bloodlust timing.
+- **The complete Season 2 Mythic+ pool — all 8 dungeons, 28 bosses + trash notes:**
+  Altar of Fangs, Murder Row, Den of Nalorakk, The Blinding Vale, Voidscar Arena,
+  plus the legacy returners Kings' Rest, Ruby Life Pools, and Temple of Sethraliss
+  (including the official 12.1 retunes — fixed Council order, reworked Avatar soaks,
+  ground-patrol drakes, and more).
+- Auto-popup on pull (ENCOUNTER_START) wired for all 36 Season 2 encounters.
+
+### Notes
+- Ula'tek skipped PTR; his page is journal/week-one derived and will be refined as live
+  strategy settles.
+
+## [2.2.4] — 2026-08-11
+
+### Changed
+- Compatibility with patch 12.1 "Curse of Ula'tek" (TOC interface bump to 12.1).
+
 ## [2.2.3] — 2026-06-20
 
 ### Compatibility

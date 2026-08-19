@@ -699,6 +699,652 @@ D.mplusNotes = {
 }
 
 ----------------------------------------------------------------------
+-- SEASON 2 (12.1) M+ POOL — 5 new Midnight dungeons
+-- Sources: Method + Icy Veins + skycoach/koroboost (Aug 2026, week 1)
+----------------------------------------------------------------------
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: ALTAR OF FANGS (30:00 timer)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Altar of Fangs",
+    trashNotes = "Rav'i wing: INTERRUPT Piercing Hiss (Primal Serpent, top priority). Dispel/freedom Paralyzing Shots (Twinfang Harrower); face its Toxic Breath away; defensive on Duostrike. SOOTHE Ravenous Descendant's stacking enrage. Avoid Venom Leech Septic Spatter death circles. Ritual Chieftain: Blood Sacrifice AoE + healing absorb. Destroy 6 Caustic Mist Totems to progress. Writhing Coil wing: INTERRUPT Envenom + CC the Evolve channel (High Evolutionist -- Evolve = group-wide Mass Envenom); poison-dispel the DoTs. Rattling Writhe: healer CD for Rattle. CC/slow fixating Hatchlings. Zul'jan wing: INTERRUPT Mass Envenom (Ula'tek's Chosen) every cast; dodge Toxic Surge lines. Ascendant Serpent: spread for Infest, dodge Virulent Whirl tornadoes, frontal away. STAGGER-KILL Living Venoms (simultaneous Venom Bursts = wipe). Bonus: 25+ Midnight Cooking/Alchemy can click the Unfinished Mixture near Zul'jan trash for a group buff.",
+    bosses = {
+        {
+            name = "Rav'i",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Feed-phase hydra: soaks + burn-the-shield",
+            tldr = "At empty energy Rav'i runs to a carrion/bone pile, shields itself, and eats -- soak every Messy Eater chunk (each miss = extra Carrion Burst) and burst the shield down. Tank steers it AWAY from Fresh Meat corpses or Feeding Frenzy doubles the tick rate.",
+            abilities = {
+                { name = "Ssscavenging", desc = "Energy-empty channel at a pile: absorb shield + Messy Eater chunks on the ground. Soak every chunk, burst the shield." },
+                { name = "Feeding Frenzy", desc = "Near a Fresh Meat corpse, Carrion Burst ticks every 1.5s instead of 3s. Tank pre-positions at the corpse-free pile." },
+                { name = "Ravenous Stomp", desc = "Heavy group-wide hit. Be topped; rotate CDs/defensives." },
+                { name = "Triple Shot", desc = "Cleave shots at multiple players -- loose spread." },
+                { name = "Regurgitate", desc = "Waves toward a player + disease debuff. Dodge; DISPEL the disease." },
+                { name = "Hydrastrike", desc = "Hard tank melee -- active mitigation every time." },
+            },
+            tank = "Mitigate Hydrastrike on CD. Your real job is walking the boss to the corpse-free pile before energy empties.",
+            healer = "Ravenous Stomp is the check; disease dispel for Regurgitate; CD any fast-tick Frenzy.",
+            dps = "Spread for Triple Shot, soak chunks, then dump everything into the Ssscavenging shield.",
+            positioning = "Loose spread; collapse to the pile during Ssscavenging to soak + cleave the shield.",
+            wipes = "Unsoaked chunks cascading Carrion Bursts. Boss eating a Fresh Meat corpse. Stomp into an untopped group.",
+            tyrannical = "Fast-tick Frenzy out-damages any healer -- pile choice and soaks must be perfect. Hydrastrike threatens tank one-shots; every Stomp wants a rotated CD.",
+        },
+        {
+            name = "The Writhing Coil",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Serpent: interrupt triple + tether-break intermission",
+            tldr = "Interrupt every Toxic Atrophy (cast 3x back-to-back), dodge the charge+frontal combo, and on Death Rattle SNAP your tether with movement abilities, then stack and nuke the 5 Uncoiled Writhes -- their damage mirrors to the boss. Synchronized Venom makes the whole fight a healer throughput check.",
+            abilities = {
+                { name = "Synchronized Venom", desc = "Constant ticking group DoT all fight -- sustained healing check." },
+                { name = "Toxic Atrophy", desc = "Interruptible, 3x back-to-back (Writhes cast it too). Each completed cast = -15% damage dealt / -10% movement stack. KICK EVERY ONE." },
+                { name = "Vindictive Onslaught", desc = "Line charge at a player then a frontal. Step out of the line; point the frontal away." },
+                { name = "Death Rattle / Uncoil", desc = "Tethers everyone + spawns 5 fixating Writhes. Sprint/blink to snap tethers (damage ramps while tethered); stack + CC + AoE the Writhes -- damage carries to the boss. Dodge their Undermining shockwaves at ~25s." },
+            },
+            tank = "Contribute a kick to the triple; group the Writhes for cleave; mitigate Tail Scythe.",
+            healer = "Your fight: Venom never stops and tether damage ramps on slow snappers. Save a throughput CD for Uncoil.",
+            dps = "Kick rotation on Toxic Atrophy is non-negotiable; hold AoE CDs for Uncoil -- add damage is boss damage.",
+            positioning = "Loose spread near the boss; snap tethers outward; collapse on a stack point for Writhes; frontal faced away.",
+            wipes = "Missed Atrophy kicks stacking the group into a death spiral. Unsnapped tethers. Writhes living to Undermine the stack.",
+            tyrannical = "Baseline Venom alone approaches heal-cap; one completed Atrophy usually ends the run. Tether ramp kills anyone without a movement ability within seconds.",
+        },
+        {
+            name = "Zul'jan",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Ritualist: soak beams, then CLEANSE stacks in frontals",
+            tldr = "Ritual of the Fang fires 4 beams that must each be soaked, applying stacking Ritual Venom that EXPLODES on expiry (~50s). You cleanse stacks by deliberately standing in Boneslicer (clears up to 8) or clipping an Axegrinder blade. Stacks still held during Bloodletting/Chop Down drop permanent blood pools that eat the room.",
+            abilities = {
+                { name = "Ritual of the Fang", desc = "4 beams toward the boss -- each must be intercepted or the group takes massive damage. Soakers gain Ritual Venom." },
+                { name = "Ritual Venom", desc = "Stacking debuff, LETHAL explosion on expiry. Clear it by taking physical damage (Boneslicer / Axegrinder) in time." },
+                { name = "Boneslicer", desc = "Frontal + 7s DoT -- the intended cleanse: stand in it ON PURPOSE to strip stacks. Healing-intensive." },
+                { name = "Chop Down", desc = "Heavy tank combo; drops blood pools if the tank still holds Venom. Big defensive every cast." },
+                { name = "Bloodletting", desc = "30s blood pools from stack-carriers -- the room-shrink mechanic." },
+                { name = "Axegrinder", desc = "3 spinning axes bouncing around. Dodge -- or clip one deliberately to cleanse." },
+            },
+            tank = "Strong mitigation every Chop Down; clear your own venom first; drift the boss so pools never cover beam lanes.",
+            healer = "Pre-plan the Boneslicer soak plan (split across casts in pugs). Fang + Boneslicer DoT overlap is the check.",
+            dps = "Pre-assign beam soaks; know which Boneslicer cast is yours; keep mid-room pool-free.",
+            positioning = "Spread to intercept 4 beams; arena center kept clean; kite around persistent axes.",
+            wipes = "Venom expiring uncleansed (explosion). Missed beam soaks. Blood pools consuming the dodge space.",
+            tyrannical = "Expiry and unsoaked beams are true one-shots; the cleanse damage itself becomes a burst-heal check -- never soak at low HP with stacks. Chop Down one-shots without a major CD.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: MURDER ROW (34:00 timer)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Murder Row",
+    trashNotes = "Pre-Kystia: INTERRUPT/CC Seduction (Seductive Sayaad). Kill Bribed Captain FIRST (Deep Corruption buffs everything); manage Shield Bash stacks, cleanse Glaive Toss bleed. Massive Felwyrm: constant pulse, DISPEL Corroding Spittle, avoid death AoE. Pre-Zaen: SOOTHE Keen Taskmaster enrage; dodge Workplace Accident. BAR EVENT: random roles (Server/Entertainer/Cleaner/Bouncer) -- reach 5 stars for +10% damage/healing 5min; INTERRUPT Scathing Review. Pre-Xathuux: Shivan Punisher frenzies at 50% (kill priority), dodge Whirlwind. Soothe/kick Fel Rage (Wrathguard Flayer), cleanse Flay. Corrupted Warlock: DISPEL Curse of Doom (or stack-split), defensive Drain Life. Felmaster Lucsei: CDs for Blade Dance, face Eye Beam away. Kick Felfire Burst (Imps) + Health Funnel (Fel Invoker); dodge Felfire Bombardment. Pre-Lithiel: Defiled Golem -- healer CD for Defiled Slam, dodge Fel Beam lines. Vendors sell one-purchase actives (Felwyrm Egg, Heartstop Blade, etc.).",
+    bosses = {
+        {
+            name = "Kystia Manaheart",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Boss + pet council with a burn-phase pivot",
+            tldr = "Kystia takes ~80% reduced damage behind Felshield -- kill Nibbles the wyrm to 20% first. Then she channels Destabilized/Chaotic Burst: she takes bonus damage but pulses heavy group AoE -- lust/CDs there, healer all-in. Kick/CC Mirror Images, dispel Corroding Spittle fast.",
+            abilities = {
+                { name = "Felshield", desc = "Kystia near-immune until Nibbles hits 20%. Hit the wyrm." },
+                { name = "Destabilized / Chaotic Burst", desc = "Post-pivot channel: boss takes bonus damage, group takes pulsing AoE. Burn window + healing check." },
+                { name = "Mirror Images", desc = "5 images periodically -- interrupt/CC/stun and clear." },
+                { name = "Corroding Spittle", desc = "Magic debuff on players. DISPEL fast." },
+                { name = "Fel Spray", desc = "Frontal cone from Nibbles -- tank faces it away." },
+                { name = "Fel Nova", desc = "Explosion at a player -- step out, stay spread." },
+            },
+            tank = "Face Nibbles away; hold both stacked for cleave; mitigate Chaos Barrage during image waves.",
+            healer = "Quiet until Destabilized -- bank the big CD for that channel. Spittle dispels on sight.",
+            dps = "Cleave both, prioritize Nibbles to 20%; hold burst for the amp window; kick images.",
+            positioning = "Boss + pet stacked, group behind the wyrm; spread on Fel Nova telegraphs.",
+            wipes = "Damage wasted into the shield. Ignored images. Entering Destabilized without a healer CD.",
+            tyrannical = "Destabilized becomes a brutal timed check -- the longer she lives past the pivot, the more pulses you eat. Spittle + Chaos Barrage during images one-shots squishies.",
+        },
+        {
+            name = "Zaen Bladesorrow",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Warehouse cover fight -- hide behind barrels",
+            tldr = "Murder In A Row is a lethal channel: every player breaks line of sight behind their OWN Forbidden Freight barrel or eats a one-shot + bleed. Fire Bomb turns barrels into Fel-Infused Freight adds -- cleave them down or Killing Spree becomes unhealable.",
+            abilities = {
+                { name = "Same-Day Delivery", desc = "Barrels spawn around the room -- they are your cover; track them." },
+                { name = "Murder In A Row", desc = "Lethal room-wide channel -- LoS behind your own barrel. One barrel per player." },
+                { name = "Fire Bomb", desc = "Spawns Fel-Infused Freight from barrels -- kill immediately." },
+                { name = "Killing Spree", desc = "Channeled AoE burst, far deadlier with Freight alive. Topped + healer CD." },
+                { name = "Envenom", desc = "Tank hit + poison -- defensive, then poison-dispel." },
+            },
+            tank = "Defensive into Envenom, call the dispel; keep the boss centered so cover stays reachable.",
+            healer = "Pre-top for Killing Spree; cleanse Envenom; fast heals on Murder In A Row bleed victims.",
+            dps = "Freight dies the moment it spawns. Claim your barrel BEFORE the channel starts.",
+            positioning = "Mid-room; everyone mentally owns a barrel; cover is a consumable -- don't waste it.",
+            wipes = "Two players sharing one barrel. Freight alive into Killing Spree. No Envenom dispel.",
+            tyrannical = "Murder In A Row without cover is a flat one-shot; Killing Spree with one Freight up out-damages heals. Envenom can solo the tank between casts.",
+        },
+        {
+            name = "Xathuux the Annihilator",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Brute: priority-kill axe add + edge kiting",
+            tldr = "When Axe Toss lands, everyone swaps to the Legion Axe INSTANTLY -- it pulses escalating AoE until dead. Tank holds the boss at the arena edge facing out and slow-kites Demonic Rage fire puddles along the wall -- floor discipline decides the last 30%.",
+            abilities = {
+                { name = "Legion Strike", desc = "Frontal tank hit -- faced out at the edge." },
+                { name = "Axe Toss", desc = "Summons the Legion Axe with escalating Fel Lightning AoE. ALL DPS swap; drag it to the boss for cleave." },
+                { name = "Infernal Crush", desc = "Heavy group AoE -- loose spread + defensive; overlaps Demonic Rage." },
+                { name = "Demonic Rage", desc = "Boss enrages, drops fire puddles; takes/deals more. Tank wall-kites; DPS burst the amp window." },
+            },
+            tank = "Edge of arena facing out; practice the slow wall-kite -- use less than half the room per Rage.",
+            healer = "Crush into Rage is the spike -- call defensives for the overlap; spot-heal the axe target.",
+            dps = "Axe first, always. Hold 2-min burst for the Demonic Rage amp.",
+            positioning = "Boss on the edge facing out; group spread behind; kite path on the perimeter, never through the middle.",
+            wipes = "Slow axe kill (lethal pulse ramp). Tank burning half the room per Rage. Unspread Crush.",
+            tyrannical = "The axe becomes a hard DPS check -- it ramps to one-shots before slow groups kill it. Crush needs personals every cast; Legion Strike trucks tanks without CDs.",
+        },
+        {
+            name = "Lithiel Cinderfury",
+            order = 4,
+            contentType = "dungeon",
+            bossType = "Fel-warlock finale: gateway dodges + add control",
+            tldr = "Use HER Demonic Gateway to dodge Malefic Wave -- getting hit is near-one-shot + DoT + fire vulnerability, and the wave EMPOWERS any surviving adds, so clear every imp/Vilefiend before each wave. Kick Chaos Bolt on rotation. The Infernal is an unkillable chaser -- never park it on a gateway.",
+            abilities = {
+                { name = "Chaos Bolt", desc = "Interruptible nuke at a player -- dedicated kick rotation." },
+                { name = "Malefic Wave", desc = "Room-crossing wave -- take the gateway at the right moment. Hit = heavy damage + DoT + Fire vulnerability; empowers surviving adds." },
+                { name = "Fingers of Gul'dan", desc = "Circles on players -- spread; each hit spawns a Wild Imp (kick/CC/knock them)." },
+                { name = "Summon Vilefiend", desc = "Add -- tank grabs, DPS focus." },
+                { name = "Infernal", desc = "Unkillable fixating hazard chasing the tank -- near-certain death on contact. Kite it wide; NEVER onto a gateway." },
+                { name = "Searing Fel Flame", desc = "Constant pulsing group damage all fight." },
+            },
+            tank = "Three jobs: hold boss + Vilefiend, kite the Infernal away from gates and group, plan your own gate trip.",
+            healer = "Steady throughput into Fel Flame; externals for anyone clipped by the wave (the DoT finishes them otherwise).",
+            dps = "Kick Chaos Bolt, stomp imps, kill Vilefiends -- board CLEAR before every wave.",
+            positioning = "Mid-room near the gateway network; spread-with-overlap for Fingers; wide berth around the Infernal; gate-adjacent before wave timers.",
+            wipes = "Missed gateway (wave one-shot). Infernal parked on the gate exit. Imps alive into a wave. Chaos Bolt into a squishy.",
+            tyrannical = "Malefic Wave one-shots through minor defensives; Chaos Bolt kills clothies; ambient flame + imp bursts overwhelm healers the moment the kick rotation slips.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: DEN OF NALORAKK (32:00 timer)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Den of Nalorakk",
+    trashNotes = "Hoardmonger wing: INTERRUPT Scavenge (Keen-Eyed Striker); defensive + bleed-cleanse Razor Dive. Thornclaw Gatherer stacks Shredding Claws (kite at high stacks). INTERRUPT every Healing Breeze (Earthwhisper Tender, priority). Spirit of Hunger: kill the Starvation Effigy on spawn; healer CD for Feast of Misery. SOOTHE Territorial Matriarch's enrage when her cub dies. Sentinel wing: Frostfang's Bloodrush opener is dangerous. Focus Terra Rumbler during Rumbling Ward. INTERRUPT every Frigid Roar (Frigid Mauler). Glacial Revenant: spread for Cryo Surge, magic-dispel, avoid death Snowdrift. Avatar of Determination: break allies from Glacial Tomb roots. Kill The Winter Squall to stop the Harsh Winds gauntlet. Nalorakk wing: INTERRUPT Arc Lightning (Stormbound Mystic). DESTROY Magma Totem instantly. Grizzled Warbringer pulses Primal Echo + Poison Spear Volley circles. SOOTHE Bestial Wrath; kite Loyal Saberfang's Shred Armor stacks. Loa Speaker Nanea: kick rotation on Lightning Bolt, drop Earthquake circles on existing puddles, kill Volatile Totems fast.",
+    bosses = {
+        {
+            name = "The Hoardmonger",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Empowerment thresholds + mushroom soaks",
+            tldr = "At HP thresholds (~90/70/40%) it empowers from the NEAREST resource pile -- tank steers the order (meat -> bone -> mushroom is easiest). Soak every Rotten Mushroom within 12s or Putrid Burst fires; soakers take stacking Toxic Spores poison -- rotate soakers, dispel.",
+            abilities = {
+                { name = "Resourceful Measures", desc = "Threshold empowerment from the nearest pile: meat = harder knockback Bellow; bone = spike area denial; mushroom = extra mushroom soaks. Tank picks the pile." },
+                { name = "Ravenous/Hearty Bellow", desc = "Group hit (+knockback when empowered) -- healer CD, brace." },
+                { name = "Earthshatter/Bonespike Slam", desc = "Impact zones -- step out fast." },
+                { name = "Rotten Mushrooms", desc = "MUST be soaked within 12s or Putrid Burst AoE. Soaking applies Toxic Spores poison -- dispel/rotate." },
+            },
+            tank = "You control the order: pre-drag toward meat first. Defensive through empowered Bellows; keep him centered for soak room.",
+            healer = "Poison-dispel soakers; every post-empowerment window is a mini healing check.",
+            dps = "Spread for mushroom coverage; don't greed through spike zones; control when thresholds hit.",
+            positioning = "Boss center, group ringed for mushroom coverage; out for slams, collapse after Bellow.",
+            wipes = "Unsoaked mushrooms chaining bursts. One player soaking everything (Spores death). Slam zones in the melee stack.",
+            tyrannical = "Empowered Bellows are healing walls, Putrid Burst hits wipe-level, double-soaker Spores lethal without instant dispel. More cycles = denser mushroom field.",
+        },
+        {
+            name = "Sentinel of Winter",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Ice-floor control: bait tornadoes, snowdrift immunity",
+            tldr = "The floor is ice -- movement is committed. Bait Raging Squall tornadoes stacked, then rotate away. Kill the two Fractured Shivercores (kick Winter's Shroud), one player soaks each Rimeshatter, and their Snowdrift piles grant KNOCKBACK IMMUNITY -- stand there for the 100-energy Frozen Tempest/Eternal Winter channel.",
+            abilities = {
+                { name = "Glacial Torment", desc = "16s frost DoT -- DISPEL immediately; spread so it can't overlap." },
+                { name = "Raging Squall", desc = "Tornadoes -- stack to bait into one cluster, then rotate around the room." },
+                { name = "Shattering Frostspike", desc = "Dodge circles; spawns 2 Shivercores casting Winter's Shroud (stacking frost-damage-taken) -- kick, kill." },
+                { name = "Rimeshatter / Snowdrift", desc = "On add death: one player soaks each snow pile; the pile then grants knockback immunity -- the safe stand for the channel." },
+                { name = "Eternal Winter (100 energy)", desc = "Heavy channeled AoE + pushback. Stand in Snowdrift or behind terrain; healer CD." },
+            },
+            tank = "Boss near the snow piles so the group cleaves and stands in Snowdrift for the channel. Watch your Shroud stacks.",
+            healer = "Torment dispels on CD; ramp for every 100-energy channel -- it escalates with Shroud stacks.",
+            dps = "Kick Winter's Shroud, burn Shivercores (time deaths so Snowdrift is up for the channel), claim your Rimeshatter soak.",
+            positioning = "Loose 10-12yd spread by default; brief stack to bait tornadoes; converge on Snowdrift for channels.",
+            wipes = "Tornadoes baited everywhere. Eternal Winter without Snowdrift (knocked into hazards). Undispelled Torment stacking with channel ticks.",
+            tyrannical = "Eternal Winter is lethal without CDs + Snowdrift; Shroud stacks push frost damage into one-shot range; DoT + channel overlap is the hardest sustained check in the dungeon.",
+        },
+        {
+            name = "Nalorakk",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Loa of War: echo parking + shield-wall hides",
+            tldr = "Echoing Maul marks 3 players who each spawn a Spectral Echo where they stand -- park them clustered at the room edge, away from everyone. On Overwhelming Onslaught the WHOLE group hides behind the boss's shield through 3 big hits, then the tank sprints back to soak Forceful Slam. During Fury of the War God, bodyblock charging echoes before they reach the center -- anything that connects triggers Demoralizing Scream. (Week-1 sources still disagree on details -- verify in-run.)",
+            abilities = {
+                { name = "Echoing Maul", desc = "Marks 3 players; an Echo spawns at their position. Walk out and drop it next to existing echoes at the edge." },
+                { name = "Spectral Slash", desc = "Echoes damage anyone nearby -- keep distance from all parked echoes." },
+                { name = "Overwhelming Onslaught", desc = "Boss leaps behind the tank + raises a shield: ENTIRE group stacks behind it through 3 heavy hits (healer CDs)." },
+                { name = "Forceful Slam", desc = "Post-Onslaught tank soak -- sprint back and eat it with a major CD, or it's a Demoralizing Scream." },
+                { name = "Fury of the War God", desc = "Echoes charge the center -- form a wall and intercept with your bodies (small hits each; stagger defensives). Anything through = Scream." },
+                { name = "Demoralizing Scream", desc = "Punish for failed blocks/soaks -- heavy group damage. Prevent it entirely." },
+            },
+            tank = "Biggest CD for Forceful Slam and be FAST back to the boss after the knockback. Keep edge parking spots reachable.",
+            healer = "Two scripted spikes: the 3 shield hits and the Fury blocking wall -- pre-ramp both.",
+            dps = "Echo discipline: edges, clustered, never in melee. Spread across charge lanes during Fury.",
+            positioning = "Echo graveyard in one corner; group BEHIND the shield on Onslaught; ring formation during Fury.",
+            wipes = "Echoes dropped in the group. Standing outside the shield. Late Slam soak. Echoes reaching center -> chained Screams.",
+            tyrannical = "Shield hits and Forceful Slam scale to one-shot territory (tank CD mandatory); per-block Fury damage forces a planned defensive rotation; a single Scream on top of anything else is a wipe.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: THE BLINDING VALE (30:00 timer)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "The Blinding Vale",
+    trashNotes = "Trinity wing: INTERRUPT every Light Bolt Volley (Radiant Spellsower, TOP priority; CC+burst it on Call The Grove -- wakes dormant adds). INTERRUPT Disorienting Screech (Lightfeather Petalwing). Kill Lightgorged Lasher fast (shields allies). Underbrush Stalker's Thornblade bleed needs focused healing. Virid Grovekeeper: Earthrupture puddle away, brace Uproot knockback. Sporeblight Belcher: healer CD for Spouting Floret, dodge Belch Spores. Overgrown Hydra: aim Lightmaw Beams away + defensives, dodge Bullet Seeds. Spineshield Beetle REFLECTS during Spiny Shield -- stop attacking. Ruia wing: Blighted mobs EXPLODE on death (drop bodies off the path). Luminous Thornmaw: bleed-cleanse Grievous Gash, dodge Solar Breath. Ziekket wing: Potatoad Matriarch -- Tongue Toss launches the tank; POISON-DISPEL Toxic Spew; destroy Toadspawn eggs before they hatch. Route: left-first lets Paladins/Priests/Herbalists (25+) grab the Light-Starved Blossom buff (+20% speed +5% haste 2min).",
+    bosses = {
+        {
+            name = "Lightblossom Trinity",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Council of three: cleave + beam soaks",
+            tldr = "Stack the bosses for cleave, kick Kezkitt's Light Bolt on rotation, and when Lightblossom Beam converts the three Fertile Loam circles into soaks, tank + 2 players step in IMMEDIATELY -- unsoaked beams = group AoE + stacking boss buffs. Dodge the Lightsower Dash lane through all three circles.",
+            abilities = {
+                { name = "Light Bolt (Kezkitt)", desc = "Spammed cast -- the fight's rot damage. Kick rotation." },
+                { name = "Thornblade (Lekshi)", desc = "Bleed strike -- move away so it can't cleave; cleanse/defensive." },
+                { name = "Bedrock Slam", desc = "Tank buster + spawns three Fertile Loam circles + party DoT. Mitigate; healer CD." },
+                { name = "Lightblossom Beam", desc = "The Loam circles become soaks: tank + 2 assigned players in them ASAP." },
+                { name = "Lightsower Dash", desc = "Line charge through all three circles -- clear the lane." },
+                { name = "Light-Scorched Earth", desc = "Area denial post-beam -- tanks reposition out immediately." },
+            },
+            tank = "Council stacked tight, mitigate every Bedrock Slam, claim one beam soak, drag off Scorched Earth fast.",
+            healer = "Bedrock Slam's party DoT is the recurring check; watch bleeds; you may be a soaker.",
+            dps = "Own the kick rotation; pre-assign the two non-tank soaks; cleave everything.",
+            positioning = "Bosses stacked mid-room; know your Loam circle before the beam; clear the Dash lane.",
+            wipes = "Missed beam soaks. Free-cast Light Bolts. Unmitigated Slam. Thornblade in the stack.",
+            tyrannical = "Slam one-shots without CDs; unsoaked beams hit wipe-level; uninterrupted Light Bolts alone out-damage a healer.",
+        },
+        {
+            name = "Ikuzz the Light Hunter",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Fixate/kiting beast, soft enrage at 50%",
+            tldr = "Clear Bloodthorn Roots (cleave or freedom) and RUN when Bloodthirsty Gaze fixates you -- getting caught is a massive hit + 5s stun. Kite the charge over roots to destroy them. At 50%, Lightcrazed Frenzy spikes all damage -- bank healer CDs for the back half.",
+            abilities = {
+                { name = "Bloodthorn Roots", desc = "Ground roots that snare -- destroy with cleave or clear with freedoms (clears several at once)." },
+                { name = "Bloodthirsty Gaze", desc = "Fixate charge -- massive hit + 5s stun if he catches you. Sprint away, path over roots." },
+                { name = "Verdant Stomp", desc = "AoE + knockback -- stay off the arena rim." },
+                { name = "Thorncaller Roar", desc = "Pulsing raid-wide all fight -- personals + steady healing." },
+                { name = "Lightcrazed Frenzy", desc = "At 50%: damage output spikes for the rest of the fight." },
+            },
+            tank = "Keep him centered so Gaze targets have run-room; help clear melee-side roots; mind Stomp knockback.",
+            healer = "Bank major CDs for sub-50% (Frenzy + Roar together). Instant spot-heals on Gaze victims.",
+            dps = "Fixated: move first, dps second -- path over roots. Everyone carries a root-removal plan.",
+            positioning = "Center-weighted, never the edge; keep root fields between you and probable charge lanes.",
+            wipes = "Gaze catching a rooted/slow player. Knockback off the edge. Healer oom before Frenzy.",
+            tyrannical = "A Gaze connect is effectively a one-shot; Frenzy-phase Roar pulses are a sustained CD-rotation check; Gaze-onto-rooted overlaps kill runs.",
+        },
+        {
+            name = "Lightwarden Ruia",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Shapeshifter: Moonkin -> Bear -> Haranir burn race",
+            tldr = "Moonkin (100-70%): kick Warden's Wrath, dodge Lightfall, spread Lightfire tornado debuffs. Bear (70-40%): Grievous Thrash bleeds DON'T fall off until the target is healed to FULL -- top them instantly. Haranir (40-0%): Spirits of the Vale machine-guns all previous abilities on an 8s cycle until death -- lust and burn.",
+            abilities = {
+                { name = "Warden's Wrath (Moonkin)", desc = "Interruptible blast -- kick it." },
+                { name = "Lightfall (Moonkin)", desc = "Ground circles -- dodge." },
+                { name = "Lightfire (Moonkin)", desc = "Debuff on 3 players; expiry fires tornadoes + silence beams. Spread, defensive, dodge." },
+                { name = "Grievous Thrash (Bear)", desc = "Bleed that persists until the target is FULL-healed. Heal to full immediately; cleanse/defensives." },
+                { name = "Pulverizing Strikes (Bear)", desc = "Frontal at a target -- spread so it can't cleave." },
+                { name = "Spirits of the Vale (40%)", desc = "Cycles Lightfire -> Thrash -> Lightfall -> Pulverizing every ~8s until dead. Burn window; hardest phase." },
+            },
+            tank = "Bear phase is yours: CDs through Mangling Claws + Thrash. Kick help in P1. Survive P3 while the team burns.",
+            healer = "Rule: Thrash targets to FULL, NOW -- partial heals do nothing. Best throughput CD saved for sub-40%.",
+            dps = "Kick duty P1, spread discipline P2, every CD held for 40% shortens the deadliest phase.",
+            positioning = "Spread 8-10yd for Pulverizing/Lightfire; map Lightfall zones and silence beams.",
+            wipes = "Thrash bleeds never topped. Healer silenced during the P3 cycle. Slow P3 out-damaging heals.",
+            tyrannical = "P3 is the wall -- each 8s rotation demands a defensive or external. Bear-phase tank combos near-one-shot without CDs; multi-target Thrash can be unhealable.",
+        },
+        {
+            name = "Ziekket",
+            order = 4,
+            contentType = "dungeon",
+            bossType = "Attrition finale: adds, corpse-burning beams, orb denial",
+            tldr = "Oozing Xylem pulses group damage the ENTIRE fight -- it's an attrition race. Kill Awaken the Lightbloom adds (kick Lightspore Shot), then aim Concentrated Lightbeam over their corpses to destroy them permanently -- point it at the platform edge. Soak Lightbloom's Essence orbs spread across players; any orb reaching the boss = shield + damage spike.",
+            abilities = {
+                { name = "Oozing Xylem", desc = "Permanent pulsing group damage -- healer endurance check." },
+                { name = "Awaken the Lightbloom", desc = "Summons adds -- kick Lightspore Shot, kill fast." },
+                { name = "Concentrated Lightbeam", desc = "Frontal beam: aim it over dead add bodies to burn them for good; puddles go toward the platform edge." },
+                { name = "Lightbloom's Essence", desc = "Orbs drift to the boss -- soak them SPREAD across players (soak = buff but increased damage taken); an orb reaching Ziekket = shield + spike." },
+                { name = "Thornspike", desc = "Tank hit + knockback + bleed -- defensive, watch the knock direction." },
+            },
+            tank = "Gather adds instantly, feed the beam over their corpses toward the edge, control Thornspike knockback.",
+            healer = "Mana marathon -- Xylem never stops. Track essence-stacked players (amplified damage) and spot-heal; CD when an orb slips.",
+            dps = "Kick adds, kill adds, soak your fair share of orbs -- never let one player stack 4.",
+            positioning = "Fight near (not on) the platform edge so beam puddles leave the playable area; loose spread covering orb lanes.",
+            wipes = "Orbs reaching the boss. Free-casting adds. Beam puddles through mid-room. One over-soaker exploding.",
+            tyrannical = "Baseline Xylem alone is a full-time healing check; unkicked add casts stack unhealable rot; over-soaks and boss-shield spikes are instant deaths. Tightest mana budget in the dungeon.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: VOIDSCAR ARENA (30:00 timer)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Voidscar Arena",
+    trashNotes = "PATH CHOICE at entry: left (Aegyra) = Versatility buff, right (Raj'kess) = Mastery buff -- Icy Veins recommends RIGHT. INTERRUPT every Demoralizing Shout (Dominated Brawler) + CC its Bloodsurge tank stacks. INTERRUPT every Shadowbolt Volley (Voidtouched Magi). ALWAYS kick Mass Shriek (Killvore Screamer, AoE fear). Kick Lava Bolt + destroy Magma Totem (Enthralled Shaman). Brutal Overseer: DESTROY the Brutal Slams shield or the channel is wipe-level -- swap immediately; dodge Macestorm. Devouring Brutalizer x3: healer CD for Dreadbellow; when it casts Devour, KILL the low-health mob it's eating before the cast finishes or it heals/empowers. DISPEL Melt Armor (tank) + Corrosive Essence (poison). Mini-bosses: Aegyra -- move out after Ferocious Leap, destroy Champion's Spear tether, spread for Savage Smash. Raj'kess -- spread for Forked Lightning, SWAP instantly to Orb of Disruption, healer CDs for Thundering Storm.",
+    bosses = {
+        {
+            name = "Taz'Rah",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Geometry exam: lines, puddles, orb sprays",
+            tldr = "Nether Dash draws lines through every player -- spread loosely at the room edge with drop-spots clumped so the Void Fissure puddles stack in one zone. Dark Bloom then makes every puddle spray orbs: rotate around the room as a group dodging them. Organized floor = free boss; scattered puddles = nowhere to stand.",
+            abilities = {
+                { name = "Nether Dash", desc = "Line attacks through player positions -- spread so lines don't cross allies; cluster the drop zone." },
+                { name = "Umbral Rupture / Void Fissure", desc = "Persistent void puddles -- placement control is the whole fight." },
+                { name = "Dark Bloom", desc = "All puddles fire orbs -- pre-move and rotate around the room; dodge everything." },
+                { name = "Void Blast", desc = "Tank hit + knockback -- mitigate, and check what's BEHIND you." },
+            },
+            tank = "Rotate the boss clockwise along the wall as the floor fills; never get knocked into fissures; defensive every Blast.",
+            healer = "Damage here is almost all avoidable -- top people pre-Bloom and punish nobody.",
+            dps = "Puddle placement IS your dps mechanic: drop tight, then full uptime while strafing orbs.",
+            positioning = "Loose spread along the wall, migrating one slice at a time; keep a clean arc reserved for Bloom dodging.",
+            wipes = "Scattered puddles making Bloom undodgeable. Tank knocked into fissures. Multiple Dash lines clipping one player.",
+            tyrannical = "Bloom orbs and fissures become one-shots -- a pure don't-get-hit exam. Void Blast deletes tanks without active mitigation.",
+        },
+        {
+            name = "Atroxus",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Add-priority brute with tank double-kiting",
+            tldr = "Monstrous Roar spawns a Toxic Creeper that pulses group-wide Toxic Aura the whole time it lives -- kill it IMMEDIATELY every time while the tank kites it (its Sickening Bite stacks + Hulking Claw is a tank one-shot combo). Dodge Poison Splash pools; stay near the boss so Noxious Breath is a cheap sidestep.",
+            abilities = {
+                { name = "Poison Splash", desc = "Spawns poison pools (Mind-Numbing Poison) -- dodge." },
+                { name = "Noxious Breath", desc = "Frontal at a random player -- stay close, sidestep." },
+                { name = "Monstrous Roar / Toxic Creeper", desc = "Spawns the add; its Toxic Aura pulses group damage while alive. Hard-swap and kill." },
+                { name = "Sickening Bite", desc = "Creeper melee stacks a tank debuff -- tank KITES the Creeper to deny hits." },
+                { name = "Hulking Claw", desc = "Tank buster w/ dispellable poison -- big defensive at LOW Bite stacks; dispel after." },
+            },
+            tank = "The dance: hold Atroxus, kite the Creeper so it never melees you, line defensives so Claw never lands on high stacks.",
+            healer = "Every Creeper window is a CD window -- Aura + Splash overlap is the rawest throughput check here. Dispel the Claw poison.",
+            dps = "Creeper > boss, zero delay, every time. Watch pool spawns mid-burst.",
+            positioning = "Melee-range default; pools baited outward; Creeper kited in a wide arc away from the group.",
+            wipes = "Slow Creeper kills (attrition wipe). Tank eating Bite stacks into Claw. Pool-choked floor late.",
+            tyrannical = "Claw + Bite stacks is a genuine tank one-shot combo; every extra second of Creeper uptime is unhealable; healer CDs must map 1:1 to Roars.",
+        },
+        {
+            name = "Charonus",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Voidlord finale: kite orbs into singularities",
+            tldr = "Unstable Singularity spawns three stars that pulse AoE and ATOMIZE (disable) anyone who touches them uninvited. Gravitic Orbs then fixate three players who must each kite their orb INTO a singularity to destroy both -- before Condensed Mass stacks kill them. Spread for Cosmic Crash, tank faces Dark Waves out, Void Cascade targets run wide.",
+            abilities = {
+                { name = "Unstable Singularity", desc = "Three pulsing stars; touching one = Atomized (damage/healing disabled). They're your ammunition -- stand near, not on." },
+                { name = "Gravitic Orbs", desc = "Fixate 3 players, stacking escalating Condensed Mass while alive. Kite YOUR orb into a singularity -- destroys both." },
+                { name = "Cosmic Crash", desc = "AoE around every player -- loose spread, no overlaps." },
+                { name = "Dark Waves", desc = "Frontal tank buster -- mitigation, faced out." },
+                { name = "Void Cascade", desc = "Projectile spray at a player -- run it away; everyone dodges the trails." },
+            },
+            tank = "Center Charonus between the three singularities so every kiter has a short path. Dark Waves out + mitigated every cast.",
+            healer = "Spot-heal kiters hard (Mass ramps fast) while covering the pulse rot. An Atomized healer is a dead group -- mind your feet.",
+            dps = "Fixated? Your dps IS the kite: shortest path, pop the orb, get back. Spread discipline between orb phases.",
+            positioning = "Boss centered in the singularity triangle; group spread in the gaps; kite lanes pre-agreed so two orbs never race to one star.",
+            wipes = "Kiters dying to Mass ramp or dragging orbs through the group. Atomized healer mid-spike. Crash overlaps. Waves clipping the party.",
+            tyrannical = "Orbs must die on the FIRST pass -- the ramp outpaces spot-healing. Crash overlaps and pulses one-shot; Waves is a tank-CD-every-cast buster.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: KINGS' REST (33:00 timer, BfA legacy -- 12.1 modernized)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Kings' Rest",
+    trashNotes = "Nearly 100% pull required for count. Pre-boss-1: Animated Guardians -- avoid Suppression Slam frontal + stacking Heavy Slams (empowered <50%). Risen Hexers: INTERRUPT every Hex Volley. Minions of Zul: PURGE Bound by Shadow to instant-kill them. Shadow-Borne Champions: purge/soothe Ancestral Fury, dodge Shadow Whirlwind + Necrotic puddles. THE GAUNTLET (4 sequential spirit packs -- kill each fast): Timalji = run from Bladestorm; Wasi = KICK Bind Soul (top priority); A'akul = CLEANSE Sudden Rupture bleeds before Blood Drain executes bleeders; Patlaa = purge Bestial Berserk, dispel Serpent Strike. Boss-2 room: INTERRUPT Unholy Mending (Seneschal M'bara); press the extra action button when Entombed; break allies out fast; kick Wretched Discharge (mummies). Hall to boss 3: KILL Healing Tide Totem instantly; kick Hex + Spectral Bolt; run out of Seismic Upheaval (lethal). Shadow of Zul mini-boss: TWO players in Pool of Darkness soaks at all times; purge the spawned Minions.",
+    bosses = {
+        {
+            name = "The Golden Serpent",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Construct: bait gold puddles, kill the animated blobs",
+            tldr = "Bait Spit Gold puddles into ONE stack away from the boss; when Lucre's Call animates them, slow/CC and cleave the Animated Gold down. ANY Gold reaching the boss = huge Luster shield + lethal group damage -- that's the fail condition. Heal hard through Serpentine Gust.",
+            abilities = {
+                { name = "Spit Gold", desc = "DoT on 2 players; drops a puddle on expiry -- run to the existing cluster, away from the boss." },
+                { name = "Lucre's Call", desc = "Animates all puddles into adds crawling to the boss. Slow/root/stun + cleave before contact." },
+                { name = "Serpentine Gust", desc = "Channeled heavy group AoE -- defensives + healer CD." },
+                { name = "Tail Thrash", desc = "Tankbuster -- active mitigation." },
+            },
+            tank = "Boss away from the gold pile, drag further if adds close in. Mitigate Tail Thrash. Help slow Golds.",
+            healer = "CD rotation per Serpentine Gust; top Spit Gold targets; plan for Gust + adds overlapping.",
+            dps = "Stack puddles tight, then own the adds -- slows + cleave the instant Lucre's Call fires. Nothing touches the boss.",
+            positioning = "Loose stack for Gust healing; designated puddle corner; boss opposite the pile.",
+            wipes = "A Gold reaching the boss. Scattered puddles. Gust with no defensives.",
+            tyrannical = "Gust is a rotated-CD healing check; Tail Thrash one-shots unmitigated; more add waves means slow/CC discipline must hold all fight.",
+        },
+        {
+            name = "Mchimba the Embalmer",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Sarcophagus rescues + interrupt-critical mummies",
+            tldr = "Free Entombed allies IMMEDIATELY (victim presses the extra action button to shake their coffin; everyone else breaks it), keep Burn Corruption fire away from boss and coffins, and kick every mummy Wretched Discharge. Focus the Drain Fluids target above 90% to strip Desiccation.",
+            abilities = {
+                { name = "Entomb", desc = "Locks a player in a sarcophagus (ticking damage). Victim presses the button; group breaks them out instantly." },
+                { name = "Drain Fluids", desc = "Channel on a player -- defensive + heal above 90% to clear the follow-up debuff." },
+                { name = "Burn Corruption", desc = "Fire on a player -- take it to the room edge, never near coffins." },
+                { name = "Awakening Slam", desc = "Spawns 2 mummies -- their Wretched Discharge MUST be kicked." },
+                { name = "Wail of Mourning", desc = "Escalating group damage while anyone stays entombed -- rescue speed is everything." },
+            },
+            tank = "Stack mummies on the boss for cleave; help kick Discharge.",
+            healer = "Focus the Drain Fluids target above 90%; sustain through Wail on slow rescues.",
+            dps = "Drop everything for rescues; kick rotation on mummies; fire to the edge.",
+            positioning = "Loose spread for clean fire drops; boss centered so every sarcophagus is reachable fast.",
+            wipes = "Slow rescues (Wail ramps + extra mummies). Unkicked Discharge. Fire blocking rescue paths.",
+            tyrannical = "Drain Fluids kills without a defensive + focused heals; Wail during a slow rescue is unhealable; assign interrupts pre-pull.",
+        },
+        {
+            name = "The Council of Tribes",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Sequential council (S2 fixed order: Kula -> Aka'ali -> Zanazal)",
+            tldr = "Survive Kula's patrolling axes and bleeds, stack to split Aka'ali's Barrel Through and let the tank kite Debilitating Backhand, then win or lose on Zanazal: KILL the Explosive Totem before Call of the Elements completes and interrupt Poison Nova.",
+            abilities = {
+                { name = "Whirling Axes (Kula)", desc = "AoE on spawn, then axes patrol the room applying bleeds -- sprint out, dodge all phase." },
+                { name = "Barrel Through (Aka'ali)", desc = "Charge at a player -- group STACKS in the line to split it." },
+                { name = "Debilitating Backhand (Aka'ali)", desc = "Knockback buster + damage-amp -- tank kites until it expires." },
+                { name = "Call of the Elements (Zanazal)", desc = "Totems: kill Explosive -> Thundering -> Torrent. Explosive completing = wipe." },
+                { name = "Poison Nova (Zanazal)", desc = "INTERRUPT -- heavy AoE if it lands." },
+                { name = "Arc Lightning (Zanazal)", desc = "Rolling group damage -- the healing wall of the fight." },
+            },
+            tank = "Kula centered for dodgeable axes; kite every Backhand; drag Zanazal onto the Explosive Totem for cleave.",
+            healer = "Spot-heal axe bleeds; save throughput CDs for Arc Lightning.",
+            dps = "Dodge axes with uptime; stack for Barrel Through; INSTANT swap to Explosive Totem; hold kicks for Poison Nova.",
+            positioning = "Kula: spread at range. Aka'ali: stacked for charges, kite lanes clear. Zanazal: boss on totem spawns.",
+            wipes = "Explosive Totem completing. Missed Poison Nova. Amped Backhand hits. Bleeds during Arc Lightning.",
+            tyrannical = "Arc Lightning needs assigned CDs per cast; Explosive Totem HP scales -- reserve burst; Backhand deletes non-kiting tanks.",
+        },
+        {
+            name = "Dazar, The First King",
+            order = 4,
+            contentType = "dungeon",
+            bossType = "Two-phase king (S2-overhauled): raptor -> mounted duo",
+            tldr = "Kick Deathly Roar in P1. In P2 spread for Quaking Leap, KEEP MOVING during Gilded Destruction (Impaling Spears spawn on YOUR location and melee attacks become frontals), and cover every Blade Combo with a real tank CD -- dispel Savage Maul first.",
+            abilities = {
+                { name = "Deathly Roar (P1)", desc = "AoE fear -- INTERRUPT every cast." },
+                { name = "Hunting Leap / Aerial Smash (P1)", desc = "Frontal leap + 2-player smash -- stay spread." },
+                { name = "Quaking Leap (P2)", desc = "Leaps onto ~4 marked players -- spread, sidestep the impact." },
+                { name = "Savage Maul", desc = "Dispellable tank bleed -- cleanse BEFORE the buster." },
+                { name = "Blade Combo", desc = "Big tankbuster -- major CD, lethal with Maul running." },
+                { name = "Gilded Destruction", desc = "Heaviest window: rolling AoE, frontal melee autos, Impaling Spears under player feet -- everyone pre-moves and rotates." },
+            },
+            tank = "Face bosses away ALWAYS (frontal autos in the burn window); Maul dispelled before every Blade Combo; CD or external per Combo.",
+            healer = "Biggest CD for Gilded Destruction; dispel Maul; triage Leap victims and spear bleeds.",
+            dps = "Kick Roar in P1; stay spread; pre-move as Gilded Destruction starts; personals for the window.",
+            positioning = "Permanent loose spread; behind/beside bosses during Gilded Destruction; rotate around mapped spear circles.",
+            wipes = "Unkicked fear chaining into spears/frontals. Stacked Quaking Leap. Maul + Combo overlap. Standing still in Gilded Destruction.",
+            tyrannical = "Blade Combo one-shots without mitigation + dispel; Gilded Destruction is a full group-CD moment every cycle; a feared group during the burst is a wipe. Longest boss here -- budget lust accordingly.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: RUBY LIFE POOLS (28:00 timer, DF legacy -- 12.1 retuned)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Ruby Life Pools",
+    trashNotes = "S2 retune: slower boss pacing, thinner trash, Thunderhead + Flamegullet now GROUND patrols. Entrance: INTERRUPT Ice Shield (Flashfrost Chillweaver); don't path whelps over Dragon Eggs (spawns extras); dodge Primal Juggernaut's Excavating Blast, tank CD for Crushing Smash. Defier Draghar mini-boss: tank CD through Steel Barrage, bait Blazing Rush into a wall. Fire wing: CC Flaming Barrage (Ashseer Flamelasher); Blazebound Destroyer: KICK Fiery Blast, DISPEL Living Bomb, group defensives for Inferno, evacuate its ~20yd death explosion; INTERRUPT Cinderbolt / Flame Dance / Flashfire at all costs. Flamegullet patrol: dodge Flame Breath, tank CD on Fire Maw, burst after 50%. Storm wing: Thunderhead patrol -- dodge Storm Breath, DISPEL Rolling Thunder ONE AT A TIME (dispel triggers damage); stay out of Thunderclap; PURGE Stormcloud/Tempest Barriers; kick Thunder Blast + Storm Bolt; avoid the 100-energy Thunderstorm knockback. High Channeler Ryvati: KICK Shock Blast, break Tempest Stormshield fast.",
+    bosses = {
+        {
+            name = "Melidrussa Chillworn",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Frost caster: consolidate ice, break the Overload shield",
+            tldr = "Bait Hailburst ice into ONE pile to keep the floor open, position Chillstorm knocks toward open ground, and kick Frigid Shard (interruptible in S2). At 66%/33% burst the Frost Overload absorb fast -- it blocks kicks while pulsing group AoE -- and cleave the whelps on the boss.",
+            abilities = {
+                { name = "Hailburst / Hailbombs", desc = "Ice blocks spawn on players -- bait them into a consolidated pile; touching them on a knock = death." },
+                { name = "Chillstorm", desc = "Pull-then-knock circle -- position so the knock sends you into OPEN floor." },
+                { name = "Frigid Shard", desc = "Interruptible tank nuke -- kick every cast." },
+                { name = "Frost Overload (66%/33%)", desc = "Whelps spawn + pulsing AoE behind an absorb that blocks interrupts -- break the shield FAST, cleave whelps." },
+            },
+            tank = "Call Frigid Shard kicks; stack whelps on the boss.",
+            healer = "CDs for Chillstorm bursts + Overload pulses.",
+            dps = "Full kick coverage; instant swap to the Overload shield; cleave whelps.",
+            positioning = "Move as one unit around the ring, ice in one pile; knock trajectory always clear of bombs.",
+            wipes = "Knocked into Hailbombs. Room choked with scattered ice. Shield not broken (unhealable pulses).",
+            tyrannical = "Overload pulses are a hard burst check -- the shield must die instantly; bomb touches are lethal; every missed Shard kick hurts the tank badly.",
+        },
+        {
+            name = "Kokia Blazehoof",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Bruiser + summoned add, terrain-denial fire",
+            tldr = "Place Ritual of Blazebinding near the boss but out of the group, then KILL the Blazebound Firestorm while kicking Blaze Volley. Sidestep Molten Boulder (S2 shows its explosion point at cast start). Slowly rotate the arena so you always have clean floor.",
+            abilities = {
+                { name = "Ritual of Blazebinding", desc = "Spawns a Firestorm add at the target's spot -- place near boss, out of group. The add is kill priority." },
+                { name = "Blaze Volley (add)", desc = "INTERRUPT on the add." },
+                { name = "Inferno (add)", desc = "Unavoidable AoE while it lives -- healer CD." },
+                { name = "Molten Boulder", desc = "Rolling frontal boulder, explodes on terrain -- sidestep, bait off the path." },
+                { name = "Searing Blows", desc = "Tankbuster with stacking bleed -- defensive every cast." },
+            },
+            tank = "Kokia next to the Firestorm for cleave; mitigation every Searing Blows; manage bleed stacks.",
+            healer = "CD per Inferno; tank triage through the bleed.",
+            dps = "Instant swap to the Firestorm, kick Blaze Volley; bait boulders toward walls.",
+            positioning = "Slow rotation keeping fresh floor ahead; never stand in boulder lanes.",
+            wipes = "Boulder hits (stun -> death). Free-cast Blaze Volley. Room painted with scorched ground. Unmitigated bleed stacks.",
+            tyrannical = "Searing bleed is a tank-death machine -- assign externals; overlapping Infernos need a CD rotation; boulders go from damage to one-shot.",
+        },
+        {
+            name = "Kyrakka and Erkhart Stormvein",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Duo: ground vet + dragon, merge at 50%",
+            tldr = "Burn Kyrakka whenever she lands -- dragon first. DISPEL Stormslam off the tank after EVERY cast (stacked = tank one-shot via Nature vulnerability), stop casting for Interrupting Cloudburst, and drop Inferno Spit fire downwind at the rim so Winds of Change blows embers off the platform. Pool lust for the 50% merge.",
+            abilities = {
+                { name = "Stormslam", desc = "Tankbuster + dispellable Nature-vulnerability -- dispel after every cast." },
+                { name = "Interrupting Cloudburst", desc = "AoE that LOCKS OUT anyone mid-cast -- stop casting." },
+                { name = "Winds of Change", desc = "Rotating room-wide wind (weaker in S2) -- still moves fire embers; track the direction." },
+                { name = "Inferno Spit", desc = "Fire DoT on 2 (3 in P2) leaving ember patches -- carry to the downwind edge." },
+                { name = "Roaring Flamebreath", desc = "Dragon frontal -- never in front of Kyrakka." },
+            },
+            tank = "Erkhart held near Kyrakka's landing spots for cleave; big mitigation on Stormslam + demand the dispel; dragon faced away.",
+            healer = "Stormslam dispel EVERY application -- the classic tank-killer; top Spit targets; big CD for the merge.",
+            dps = "Kyrakka priority whenever grounded; stop-cast discipline; Spit to the rim; pool CDs and lust for P2.",
+            positioning = "Mid-platform, wind-aware; Spit runners downwind to the edge; breath lane clear.",
+            wipes = "Undispelled Stormslam stacks. Embers blown through the group. Caster lockouts killing coverage. P2 with no CDs left.",
+            tyrannical = "P2 is the wall: 3x Spit + Cloudburst + Stormslam overlap. Hold lust for 50% and burst the merge before overlaps stack.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DUNGEON: TEMPLE OF SETHRALISS (32:00 timer, BfA legacy -- 12.1 reworked)
+----------------------------------------------------------------------
+D.dungeons[#D.dungeons + 1] = {
+    name = "Temple of Sethraliss",
+    trashNotes = "Needs bonus packs for count -- plan the route. Snake wing: Shrouded Fangs (stealthed packs) -- prevent Poisoned Cheap Shot (lethal stun opener; poison-dispel victims); defensives for Barbed Krolusk Serrated Charge bleeds; CC/KICK Arrow Barrage (Sandswept Hunter -- S2: dodges Sandburst Arrow circles first); kill Sand-Sworn Riders FAST (endless Swarming Krolusk summons). Merektha wing: DISPEL Cytotoxin constantly; INTERRUPT/CC Addle Mind on cooldown (critical); avoid Serpent's Stormcall puddles. Storm ascent: kick Lightning Bolts everywhere; DISPEL Imbued Conduction; PURGE Accumulate Charge (Agitated Nimbi); spread for Spark Step; tank CD for Sunder Slam; avoid Loose Sparks orbs. Orb event (S2 REWORK -- nobody channels anymore): CC the Temple Disruptor and the orb completes and FOLLOWS you; kite the CC-immune Orb Watcher outside the Eye area; kick Flame Shock, take Hex Muck out of the group.",
+    bosses = {
+        {
+            name = "Adderis and Aspix",
+            order = 1,
+            contentType = "dungeon",
+            bossType = "Duo with alternating immunity (S2 forced swaps)",
+            tldr = "Always hit the boss WITHOUT the Storm Blessed shield -- it passes at health thresholds, so swap cleanly. Stack to split Thunder and Lightning, and never get Gale Force-knocked into Tempest Winds silence zones. After the first death the survivor Frenzies -- keep their HP even-ish and save CDs.",
+            abilities = {
+                { name = "Storm Blessed", desc = "One boss immune at all times, passing at thresholds -- mandatory target swaps." },
+                { name = "Thunder and Lightning", desc = "Group soak -- stack to split, then out." },
+                { name = "Gale Force", desc = "Knockback lines -- brace against walls, never toward wind zones or packs." },
+                { name = "Tempest Winds", desc = "2 players drop silence/damage zones -- walk them to the rim." },
+                { name = "Frenzy (P2)", desc = "Survivor casts everything much faster after the first death." },
+            },
+            tank = "Swap with the group; mitigation for Overload; bosses off the wind zones, wall-safe knock direction.",
+            healer = "Focus Gust targets; group topped before each soak; sustained AoE healing in Frenzy.",
+            dps = "Zero damage into immunity; collapse fast for soaks; zones dropped on the rim.",
+            positioning = "Near a wall to kill the knockback; zones away from the stack point; know your landing spot before Gale Force.",
+            wipes = "Tunneling the immune boss. Knocked into silence zones (silenced healer). Under-soaked Thunder and Lightning. Frenzy with no CDs.",
+            tyrannical = "The Frenzy after the first death is the killer -- keep damage even so the swap thresholds don't strand you in a long Frenzy; under-soaks one-shot.",
+        },
+        {
+            name = "Merektha",
+            order = 2,
+            contentType = "dungeon",
+            bossType = "Snake: CC the knots, dodge the burrow, cleave the hatch",
+            tldr = "Break A Knot of Snakes with AoE CC -- group on the arrow-marked player BEFORE the cast. Paint Thunder Spit lightning along the wall, and during Hatch cleave the double-HP Storm Serpent first while kicking Poison Spit. Dodge the Burrow charge (S2 added an indicator).",
+            abilities = {
+                { name = "A Knot of Snakes", desc = "Stuns wrapped players -- freed ONLY by CC/disturb effects. Collapse on the marked player pre-cast." },
+                { name = "Thunder Spit", desc = "Targets trail lightning -- keep moving, paint the room edge." },
+                { name = "Hatch", desc = "3 Toxic Vipers + 1 Storm Serpent (2x HP -- cleave it first); kick Poison Spit; boss burrows with constant AoE until adds die." },
+                { name = "Burrow", desc = "Underground charge -- lethal on high keys; dodge via the indicator." },
+                { name = "Lightning Bite / Serpentstorm", desc = "Tankbuster (defensive every cast) + channeled group AoE (healer CDs)." },
+            },
+            tank = "Mitigate every Bite; drag the Storm Serpent into the viper pile; help CC knots.",
+            healer = "Major CDs for Serpentstorm + the burrowed Hatch phase; poison dispels.",
+            dps = "Hold an AoE CC for every Knot; Storm Serpent -> vipers with kicks; uptime while dodging Burrow.",
+            positioning = "Loose mid-room, collapsing on the marked player before Knots; spit trails on the wall; center clear for Burrow.",
+            wipes = "Spread group during Knots (stunlocked players eaten). Center covered in lightning. Missed Poison Spit kicks. Burrow hits.",
+            tyrannical = "Burrow one-shots; Hatch AoE while adds live is a brutal check -- burst the Serpent; Bite needs a real defensive every time.",
+        },
+        {
+            name = "Galvazzt",
+            order = 3,
+            contentType = "dungeon",
+            bossType = "Pure beam-soak execution (S2: +7% HP)",
+            tldr = "Lightning Spires beam energy into the boss -- a NON-TANK body-blocks each beam immediately, rotating as Galvanized stacks build. 100 energy = Consume Charge = wipe. Rotate defensives through the constant Induction pulses and drag the boss off his own void fields.",
+            abilities = {
+                { name = "Lightning Spire", desc = "Three pillars beam into the boss -- intercept between spire and boss. Soaking stacks Galvanized damage-taken; rotate soakers; tank does NOT soak." },
+                { name = "Consume Charge", desc = "At full energy -- effectively a wipe. Never let energy cap." },
+                { name = "Induction", desc = "Heavy pulsing group damage + void field under the boss -- reposition, don't stand in fields." },
+            },
+            tank = "Boss out of Induction fields, positioned to shorten block lines. Do not soak.",
+            healer = "Throughput marathon -- spread CDs evenly, spot-heal Galvanized soakers, call personals on Induction.",
+            dps = "Assign the three beams instantly each set (closest takes closest); swap on stacks; damage between soaks.",
+            positioning = "Pre-assigned spire directions; boss central so all beams are blockable; readable floor.",
+            wipes = "Unsoaked beams -> Consume Charge. One soaker eating too many stacks. Healer OOM. Boss parked in fields.",
+            tyrannical = "The whole fight IS the Tyrannical check -- more spire sets, longer Induction. Strict soak rotation or the floor damage becomes unhealable.",
+        },
+        {
+            name = "Avatar of Sethraliss",
+            order = 4,
+            contentType = "dungeon",
+            bossType = "Inverse boss: HEAL her to full (S2 heavily retuned)",
+            tldr = "You heal the Avatar to full while killing what corrupts her. Essence Defilers FIRST -- their Defiling Taint blocks all boss healing. Guardian deaths drop Corrupted Lifeforce soaks (S2: 4.5s window, DPS soak them -- a miss now fires a +150% Corruption Burst). AoE the Tormentor swarms chasing the healer.",
+            abilities = {
+                { name = "Defiling Taint (Essence Defiler)", desc = "Blocks healing the Avatar -- kill priority #1, always." },
+                { name = "Corrupted Guardian", desc = "Mini-tank add: Tainted Strike buster, leaves puddles, drops Lifeforce orbs on death." },
+                { name = "Corrupted Lifeforce", desc = "Purple soaks, one per player, DPS preferred (soak = healing-done + phys-taken debuff). S2: 4.5s window; missed soak = +150% burst." },
+                { name = "Siphon the Weak (Tormentors)", desc = "Swarms chase the HEALER, each siphons boss HP -- AoE them down." },
+                { name = "Latent Hex / Hex Muck", desc = "S2: 1 target, prefers the healer -- place the muck away; kick Flame Shock." },
+            },
+            tank = "Own the Guardian: mitigation for Tainted Strike, corner-drag the puddles, peel Tormentors off the healer.",
+            healer = "Two jobs: party alive AND Avatar pumped whenever Taint is down. Kite Tormentors. Don't soak Lifeforce (healing debuff).",
+            dps = "Kill order: Defiler -> Guardian -> AoE Tormentors. Grab your Lifeforce soak within 4.5s. Kick Flame Shock.",
+            positioning = "Guardian in a corner; group center for soak coverage; muck and puddles on edges; healer keeps escape lanes.",
+            wipes = "Missed Lifeforce soaks (+150% bursts). Defiler alive (boss healing = zero, timer bleeds). Tormentors mobbing the healer.",
+            tyrannical = "Add HP scaling makes Defiler kill speed THE fight; Guardian needs real tank CDs; one missed soak or a healer death typically ends the run.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
 -- Register dungeon bosses in byName lookup
 ----------------------------------------------------------------------
 for _, dungeon in ipairs(D.dungeons) do
@@ -843,5 +1489,40 @@ for npcID, bossName in pairs(dungeonNpcIDs) do
     local boss = D.byName[bossName:lower():gsub("[%s%-'']", "")]
     if boss then
         D.byNpcID[npcID] = boss
+    end
+end
+
+----------------------------------------------------------------------
+-- S2 dungeon encounter IDs (ENCOUNTER_START auto-popup) -- from the
+-- in-game /vs s2 EJ probe 2026-08-19 (dungeonEncounterIDs).
+----------------------------------------------------------------------
+local s2DungeonEncounterIDs = {
+    -- Altar of Fangs
+    [3456] = "Rav'i", [3457] = "The Writhing Coil", [3458] = "Zul'jan",
+    -- Murder Row
+    [3101] = "Kystia Manaheart", [3102] = "Zaen Bladesorrow",
+    [3103] = "Xathuux the Annihilator", [3105] = "Lithiel Cinderfury",
+    -- Den of Nalorakk
+    [3207] = "The Hoardmonger", [3208] = "Sentinel of Winter", [3209] = "Nalorakk",
+    -- The Blinding Vale
+    [3199] = "Lightblossom Trinity", [3200] = "Ikuzz the Light Hunter",
+    [3201] = "Lightwarden Ruia", [3202] = "Ziekket",
+    -- Voidscar Arena
+    [3285] = "Taz'Rah", [3286] = "Atroxus", [3287] = "Charonus",
+    -- Kings' Rest
+    [2139] = "The Golden Serpent", [2142] = "Mchimba the Embalmer",
+    [2140] = "The Council of Tribes", [2143] = "Dazar, The First King",
+    -- Ruby Life Pools
+    [2609] = "Melidrussa Chillworn", [2606] = "Kokia Blazehoof",
+    [2623] = "Kyrakka and Erkhart Stormvein",
+    -- Temple of Sethraliss
+    [2124] = "Adderis and Aspix", [2125] = "Merektha",
+    [2126] = "Galvazzt", [2127] = "Avatar of Sethraliss",
+}
+for eid, bossName in pairs(s2DungeonEncounterIDs) do
+    local boss = D.byName[bossName:lower():gsub("[%s%-'']", "")]
+    if boss then
+        D.byEncounterID[eid] = boss
+        boss.encounterID = eid
     end
 end
