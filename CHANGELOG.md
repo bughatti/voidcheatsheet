@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.4.0] — 2026-10-05
+
+### Added
+- **Season 2 delves:** the new Nemesis **Venomfall Deeps (Azta'rec)**, **The Ring of Glory** (Open Night gauntlet,
+  Drakta, Gnok) and **Gnarldor Isle** (Gralka Snake-Eater, Osseous Amalgamation).
+- **"Children of Ula'tek" story bosses** in existing delves: Replicating Venomborne (Darkway, Grudge Pit, Twilight
+  Crypts, Parhelion Plaza), Disciple of Vash'nik (Atal'Aman, Shadowguard Point), Abominable Blunder (Shadow Enclave).
+  Ability details for these three are still thinly documented and are flagged as such on their pages.
+- Delve tips updated for Valeera's Season 2 poisons and the new Nemesis.
+- Name search without apostrophes and short names for Season 2 raid bosses (`/cs ulatek`, `/cs vashnik`, ...).
+
+### Changed
+- **Ula'tek rewritten** from settled live strategy (was based on Dungeon Journal data at launch): two tanks on head
+  and tail, carrying eggs into Spectral Coils, Grasping Fangs and the Doomscale Cauldron in Phase 2, Serpent's Bite as
+  a raid soak, and Bloodlust on the first Rage of the Shackled.
+- **The Lost Explorers, The Twin Fangs and Nalorakk** corrected where launch-week guides disagreed (fish order,
+  Eternal Venom thresholds, Zul'jarra's Defensive Stance).
+- **Hotfix corrections** across the raid and Mythic+ pages (Rav'i, Avatar of Sethraliss, The Coiled Altar, Sszorak,
+  Vashnik, Kings' Rest, Altar of Fangs and Blinding Vale trash) per Blizzard's hotfix notes through Oct 1.
+- Every changed claim was cross-checked against at least two independent sources.
+
 ## [2.3.1] — 2026-08-19
 
 ### Fixed

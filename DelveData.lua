@@ -1,7 +1,8 @@
 ----------------------------------------------------------------------
 -- VoidCheatSheet — Delve Data
 -- Midnight Season 1 (Patch 12.0) — 10 delves + 1 Nemesis
--- Sources: Method.gg, Icy Veins, Wowhead (April 2026)
+-- Season 2 (Patch 12.1) — 3 new delves incl. Nemesis + 3 story bosses (Oct 2026)
+-- Sources: Method.gg, Icy Veins, Wowhead (April 2026); S2 cross-checked 2+ sites
 -- Companion: Valeera Sanguinar
 ----------------------------------------------------------------------
 
@@ -339,15 +340,232 @@ D.delves[#D.delves + 1] = {
 }
 
 ----------------------------------------------------------------------
+-- SEASON 2 (patch 12.1) — 3 new Coiled Isle delves incl. the new Nemesis.
+-- Researched 2026-10-05; every claim cross-checked on 2+ sites (Method,
+-- Icy Veins, Sidestreet Sloots, Expcarry, Wowcarry, Blizzard notes).
+----------------------------------------------------------------------
+
+----------------------------------------------------------------------
+-- NEMESIS (S2): VENOMFALL DEEPS (Coiled Isle, north)
+----------------------------------------------------------------------
+D.delves[#D.delves + 1] = {
+    name = "Venomfall Deeps",
+    bosses = {
+        {
+            name = "Azta'rec",
+            order = 1,
+            contentType = "delve",
+            bossType = "Season 2 Nemesis: single boss + 3 memory intermissions (difficulties ? and ??)",
+            tldr = "Interrupt Soul Extinction every time, get Void Toxin dispelled, and aim Noxious Bile at the walls. At 90/60/30% memorize which quadrant is safe in each venom wave -- then the same order repeats with NO warnings.",
+            abilities = {
+                { name = "Soul Extinction", desc = "Interruptible cast that is near-lethal if it lands. Top interrupt priority." },
+                { name = "Void Toxin", desc = "Magic DoT that also cuts your damage. Get it dispelled (Healer Valeera)." },
+                { name = "Noxious Bile", desc = "Frontal cone that leaves poison pools -- point it at the edge to keep the middle clean." },
+                { name = "Venom Storm", desc = "Slow poison waves crossing the arena -- move through the gaps." },
+                { name = "Serpent's Strike", desc = "Physical hit on tanks -- active mitigation." },
+                { name = "Sermon of Ula'tek (90/60/30%)", desc = "Boss moves to the center; 3 of 4 quadrants fill with venom each wave and 1 is safe. Then the SAME order repeats with no visual cues -- memorize it. Waves: 3/4/5 on ?, 5/6/7 on ??." },
+                { name = "Echo of Azta'rec (?? only)", desc = "Spawns each intermission with the same abilities and less health. Kill it before the intermission ends or you fight two bosses (two Soul Extinctions). It can be crowd-controlled." },
+            },
+            companion = "Tank/DPS: Healer Valeera to dispel Void Toxin. Healers: DPS Valeera to cover Soul Extinction interrupts. Common picks: Frostheart Venom poison, Corrosive Bilespear + Soul-Cracking Dreamcatcher curios.",
+            tank = "Mitigate Serpent's Strike; keep Noxious Bile aimed outward. Save your interrupt for Soul Extinction.",
+            healer = "N/A (solo content). Playing a healer: dispel Void Toxin yourself.",
+            dps = "Save your interrupt for Soul Extinction. On ??, swap to the Echo immediately.",
+            positioning = "Bile pools at the edges; keep the center clean for the intermissions.",
+            wipes = "A missed Soul Extinction. Wrong quadrant during the blind repeat. Echo still alive when the intermission ends. Center covered in Bile pools.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DELVE: THE RING OF GLORY (Coiled Isle, east)
+-- Stories: Open Night + Game Day (end on Drakta), Adopt-a-thon (ends on Gnok)
+----------------------------------------------------------------------
+D.delves[#D.delves + 1] = {
+    name = "The Ring of Glory",
+    bosses = {
+        {
+            name = "Open Night Gauntlet",
+            order = 1,
+            contentType = "delve",
+            bossType = "Mini-boss gauntlet before Drakta (Open Night story)",
+            tldr = "Interrupt-heavy waves: kill and kick the casters first, and break Crashfoot's charge on a wall.",
+            abilities = {
+                { name = "Crashfoot", desc = "Savage Gore bleeds his target; hide behind a wall to stop Stampeding Charge." },
+                { name = "Murloc trio", desc = "Kill and interrupt the 2 small casters first." },
+                { name = "Brinebeater", desc = "Tidal Smash = big circle around him. INTERRUPT Tidal Rage (+60% damage). Break Water drops circles on you and Valeera." },
+                { name = "Guth'kar the Bound", desc = "Keep Curse of Dread interrupted; Void Bolts can be kicked too." },
+                { name = "Ghostly trolls", desc = "Keep Hexspitter Zit'ka interrupted." },
+            },
+            companion = "DPS Valeera for the extra interrupts.",
+            tank = "Break Stampeding Charge with walls.",
+            healer = "N/A (solo content).",
+            dps = "Casters first; keep interrupts rolling.",
+            wipes = "An uninterrupted Tidal Rage. Eating Stampeding Charge in the open.",
+        },
+        {
+            name = "Drakta",
+            order = 2,
+            contentType = "delve",
+            bossType = "Melee champion (ends Open Night and Game Day)",
+            tldr = "Dodge Soul Cleave and drag him out of its void zone; kite him while Roar of the Champion is up.",
+            abilities = {
+                { name = "Soul Cleave", desc = "Big circle around him that hits hard and leaves a void zone -- move out, then pull him off it." },
+                { name = "Roar of the Champion", desc = "He deals 80% more damage but moves slower -- kite until it fades." },
+            },
+            companion = "Any role works (DPS Valeera helps with the Open Night gauntlet first).",
+            tank = "Kite during Roar; reposition after each Cleave.",
+            healer = "N/A (solo content).",
+            dps = "Ranged: keep your distance during Roar.",
+            wipes = "Taking melee hits during Roar. Standing in Cleave void zones.",
+        },
+        {
+            name = "Gnok",
+            order = 3,
+            contentType = "delve",
+            bossType = "Two-phase (ends Adopt-a-thon) -- revives at 0% into phase 2",
+            tldr = "P1: drop Upheaval puddles away from the fight. P2: sidestep the Necrotic Upheaval frontals and get out of Ejecting Decay circles.",
+            abilities = {
+                { name = "Upheaval (P1)", desc = "Big circle on the farthest target that leaves a puddle -- drop it at the edge." },
+                { name = "Pulverize (P1)", desc = "Moderate hit on his target." },
+                { name = "Necrotic Upheaval (P2)", desc = "Frontal you can sidestep; leaves void zones." },
+                { name = "Ejecting Decay (P2)", desc = "Small circles around him plus a large circle on you and Valeera -- get out. He can't cast it while moving." },
+            },
+            companion = "Any role; Healer Valeera is safest for P2.",
+            tank = "Puddles to the edge.",
+            healer = "N/A (solo content).",
+            dps = "Save cooldowns for P2.",
+            wipes = "Room covered in puddles and void zones by P2.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 DELVE: GNARLDOR ISLE (Coiled Isle, south)
+-- Stories: Olds and Ends + Speaking Their Language (Gralka), Minchi's Osseous Adventure (Osseous Amalgamation)
+----------------------------------------------------------------------
+D.delves[#D.delves + 1] = {
+    name = "Gnarldor Isle",
+    bosses = {
+        {
+            name = "Gralka Snake-Eater",
+            order = 1,
+            contentType = "delve",
+            bossType = "Stacking-buff melee boss (ends Olds and Ends / Speaking Their Language)",
+            tldr = "Do NOT interrupt Purging Breath -- it strips her damage stacks. Just sidestep its toxic waves.",
+            abilities = {
+                { name = "Snake Eater", desc = "Gives her 2 stacks of +15% damage each and leaves a venom puddle." },
+                { name = "Venomblade Slash", desc = "Physical hit plus a Nature DoT that grows with her stacks." },
+                { name = "Purging Breath", desc = "6s channel: every 2s it removes 1 stack and fires a toxic wave at her target. Sidestep each wave -- don't interrupt it." },
+            },
+            companion = "Healer Valeera -- dispels the poison and won't interrupt Purging Breath.",
+            tank = "Mitigate Venomblade Slash at high stacks.",
+            healer = "N/A (solo content).",
+            dps = "Keep your interrupt OFF Purging Breath.",
+            wipes = "Interrupting Purging Breath (her stacks keep building). Getting hit by the waves.",
+        },
+        {
+            name = "Osseous Amalgamation",
+            order = 2,
+            contentType = "delve",
+            bossType = "Bone construct (ends Minchi's Osseous Adventure)",
+            tldr = "Interrupt Bone Shield, get out of Bonestorm, and keep moving through Bone Spike.",
+            abilities = {
+                { name = "Bonestorm", desc = "Physical damage around him -- get out." },
+                { name = "Bone Shield", desc = "Large absorb -- interrupt it." },
+                { name = "Bone Spike", desc = "Spikes erupt under you one after another, with damage and a knockback -- keep moving." },
+            },
+            companion = "DPS Valeera as a backup interrupt.",
+            tank = "Move out of Bonestorm.",
+            healer = "N/A (solo content).",
+            dps = "Interrupt Bone Shield.",
+            wipes = "An uninterrupted Bone Shield dragging the fight out. Standing still during spikes.",
+        },
+    },
+}
+
+----------------------------------------------------------------------
+-- S2 STORY BOSSES added to existing delves ("Children of Ula'tek" 4th
+-- stories). Boss + location confirmed on 2 sites; most ability detail is
+-- from one guide so far -- flagged in bossType. Fresh table per delve so
+-- each delve's order number is correct.
+----------------------------------------------------------------------
+local function venomborne() return {
+    name = "Replicating Venomborne", contentType = "delve",
+    bossType = "Season 2 story boss: add-spawning poison boss (only one guide documents its abilities so far)",
+    tldr = "Kill each wave of Lesser Venomborne before the next Serpentogenesis -- any left alive heal him.",
+    abilities = {
+        { name = "Serpentogenesis", desc = "Spawns Lesser Venomborne adds; any still alive at the next cast heal him for a share of his health." },
+        { name = "Venom Splash", desc = "Poison pool that hits hard and slows -- move out." },
+        { name = "Hydra Strike", desc = "Nature hit plus a DoT that stacks." },
+    },
+    companion = "Healer Valeera to cover the stacking DoT.",
+    tank = "Keep him out of the pools.",
+    healer = "N/A (solo content).",
+    dps = "AoE the adds as soon as they spawn.",
+    wipes = "Adds left alive. Hydra Strike stacks running away.",
+} end
+
+local function disciple() return {
+    name = "Disciple of Vash'nik", contentType = "delve",
+    bossType = "Season 2 story boss: poison caster (ability detail from one guide; Toxic Froth confirmed by player reports)",
+    tldr = "Interrupt Malignance every time, sidestep Living Venom and cleave its slime, and use defensives for Toxic Froth.",
+    abilities = {
+        { name = "Malignance", desc = "Interruptible stacking Nature damage plus a slow. Top interrupt priority." },
+        { name = "Living Venom", desc = "Channeled AoE around her -- sidestep it; then a slime add spawns -- cleave it down." },
+        { name = "Toxic Froth", desc = "Poison DoT that ignores line of sight and can be cast while she's crowd-controlled -- use a defensive. Heavy at Tier 11." },
+    },
+    companion = "Tank or Healer Valeera (player reports).",
+    tank = "Defensives during Toxic Froth.",
+    healer = "N/A (solo content).",
+    dps = "Interrupt Malignance; kill the slime.",
+    wipes = "Toxic Froth with no defensives left (reported overtuned at high tiers). A missed Malignance.",
+} end
+
+local function blunder() return {
+    name = "Abominable Blunder", contentType = "delve",
+    bossType = "Season 2 story boss: Nature-damage abomination (only one guide documents its abilities so far)",
+    tldr = "Mostly movement: get out of Searing Spew and Acid Spray, heal through Corrosive Bile.",
+    abilities = {
+        { name = "Corrosive Bile", desc = "Nature blob -- heal through it." },
+        { name = "Searing Spew", desc = "AoE around him that hits hard and slows -- get out." },
+        { name = "Acid Spray", desc = "Channeled waves of AoE that leave a short DoT -- dodge them." },
+    },
+    companion = "Healer Valeera.",
+    tank = "Step out of Spew.",
+    healer = "N/A (solo content).",
+    dps = "Keep damage up while moving.",
+    wipes = "Standing in Searing Spew or Acid Spray.",
+} end
+
+local function addStoryBoss(delveName, boss)
+    for _, d in ipairs(D.delves) do
+        if d.name == delveName then
+            boss.order = #d.bosses + 1
+            d.bosses[#d.bosses + 1] = boss
+            return
+        end
+    end
+end
+addStoryBoss("The Darkway", venomborne())        -- Eggsplosive Growth
+addStoryBoss("The Grudge Pit", venomborne())     -- Fungal Pharmacon
+addStoryBoss("Twilight Crypts", venomborne())    -- Why'd It Have to Be Snakes?
+addStoryBoss("Parhelion Plaza", venomborne())    -- Caustic Crush
+addStoryBoss("Atal'Aman", disciple())            -- Venomous Vapors
+addStoryBoss("Shadowguard Point", disciple())    -- Basilisk Blitz
+addStoryBoss("The Shadow Enclave", blunder())    -- Infiltrate and Ameliorate
+
+----------------------------------------------------------------------
 -- General Delve Tips
 ----------------------------------------------------------------------
 D.delveTips = {
-    "COMPANION: Valeera Sanguinar. DPS spec = auto-interrupts. Healer spec = auto-dispels + sustained healing.",
+    "COMPANION: Valeera Sanguinar. DPS spec = auto-interrupts. Healer spec = auto-dispels + sustained healing. Season 2: her poison is now a separate pick from her role (new: Bursting Toad Toxin, Frostheart Venom, Phantasmal Spore Toxin).",
+    "SEASON 2 NEMESIS: Venomfall Deeps (Azta'rec), north Coiled Isle -- replaces Torment's Rise. Unlocked by clearing high-tier delves (guides disagree on the exact tier).",
+    "SEASON 2 DELVES: The Ring of Glory and Gnarldor Isle (Coiled Isle); 8 older delves gained a new 'Children of Ula'tek' story.",
     "TIERS: T1-T3 easy, T4-T7 moderate, T8-T10 challenging (Hero-track loot), T11 hardest (Myth crests).",
     "BOUNTIFUL: Marked with special icon on map. Use 1 Coffer Key per Bountiful run for guaranteed loot.",
     "BOUNTIFUL ROTATION: Different delves are Bountiful on different days.",
     "DEATHS: Companion stress increases with deaths — minimize deaths on harder tiers.",
-    "NEMESIS: Torment's Rise (Nullaeus) — T8 and T11 only. First kill = 30 Hero Dawncrests (uncapped).",
+    "SEASON 1 NEMESIS: Torment's Rise (Nullaeus) — T8 and T11 only. First kill = 30 Hero Dawncrests (uncapped).",
     "HARDEST BOSSES: Lord Antenorian (one-shot mechanic), Blademaster Darza (Shade Cleave), Gladius Slaurna (snowball damage).",
     "EASIEST BOSSES: Brightthorn, Esuritus, Voidscorned Vagrant.",
 }
@@ -413,6 +631,8 @@ local delveNpcIDs = {
     [256683] = "Esuritus",
     [246621] = "Gladius Slaurna",
     [252892] = "Nullaeus",
+    [270956] = "Replicating Venomborne",  -- S2 (Wowhead)
+    [260174] = "Abominable Blunder",      -- S2 (Wowhead)
 }
 for npcID, bossName in pairs(delveNpcIDs) do
     local boss = D.byName[bossName:lower():gsub("[%s%-'']", "")]
