@@ -392,7 +392,7 @@ D.raids = {
     ---------------------------------------------------------------------------
     -- RAID 4: THE VENOMOUS ABYSS (8 bosses, Season 2, opened 2026-08-18)
     -- Sources: Icy Veins per-boss guides + skycoach full-raid guide + expcarry
-    -- (Ula'tek is journal-derived -- no proven live meta yet; update as it settles)
+    -- Ula'tek rewritten 2026-10-05 against settled guides (2+ sources per claim; disputed numbers kept general).
     ---------------------------------------------------------------------------
     {
         name = "The Venomous Abyss",
@@ -453,30 +453,34 @@ D.raids = {
             {
                 name = "The Lost Explorers",
                 order = 3,
-                bossType = "Council (3 targets), fish-fed ultimate system",
-                tldr = "Keep the three tortollans split (all three within 30yd = United Defense, 99% damage reduction) and their HP even. At ~90-95 shared Energy, GRAB FISH from Gebbo's crates and feed it (Extra Action Button) to a chosen boss -- triggers that boss's controlled ultimate and marks them (each boss only once). Fail to feed before the empower cast = Empowered Ascension wipe.",
+                bossType = "Council: three tortollans (separate health) possessed by Mor'zahi; fish-fed ultimates",
+                tldr = "At 90-95 of Mor'zahi's energy, feed a Disgusting Fish (from Gebbo's crates, Grab Fish button) to one boss -- that boss casts its ultimate and can't be picked again. Miss a feed = Final Ascension wipe. Most current guides feed Gebbo -> Nama -> Iku. Heroic+: never let all three get within 30 yd (United Defense). Balance health and kill them together.",
                 phases = {
-                    { name = "Single phase + 3 ultimates", desc = "One ultimate per boss, chosen by where you feed the fish. Common orders: Gebbo -> Nama -> Iku (Icy Veins) or Nama -> Iku -> Gebbo (skycoach). Pick one, pre-assign." },
+                    { name = "Single phase + 3 ultimates", desc = "Each fish feed triggers one boss's ultimate and resets Mor'zahi's energy. Order is a preference -- most current guides use Gebbo -> Nama -> Iku. Only 3 fish exist, so running out works like an enrage." },
                 },
                 abilities = {
-                    { name = "United Defense", desc = "All three within 30yd = 99% damage reduction. Keep them split at all times." },
-                    { name = "Steady Strikes (Nama)", desc = "Stacking physical damage-taken on tank -- swap to control." },
-                    { name = "Shell Spin (Nama)", desc = "Three spinning shells at a player; clip = 4s stun. Melee bait outward, sidestep." },
-                    { name = "Mighty Thud (Nama ult)", desc = "Three marked players take consecutive group soaks -- one melee, two ranged spots. Assign groups; no overlap." },
-                    { name = "Blink Nova (Iku)", desc = "Teleports to a ranged player and novas; damage falls off with distance -- bait it FAR." },
-                    { name = "Icebound Flames (Iku)", desc = "Interruptible: heavy damage + slow. Kick on cooldown." },
-                    { name = "Frostfire Volley (Iku ult)", desc = "Huge Frost/Fire circles -- spread; opposite-element pools clear by touching (costs damage)." },
-                    { name = "Throw Junk / Grab Fish (Gebbo)", desc = "Crates land; breaking them stacks Splinters raid damage BUT contains the fish -- break deliberately, on schedule." },
-                    { name = "Explosive Surprise / Blast Wave (Gebbo ult)", desc = "Bombs create an arena-crossing wave -- JUMP it with the Bouncy Mushrooms. Keep bombs off mushrooms." },
+                    { name = "Final Ascension (Mor'zahi)", desc = "Wipe cast when his energy fills -- prevented only by feeding a fish at 90-95 energy." },
+                    { name = "Disgusting Fish / Grab Fish", desc = "In one of Gebbo's crates; use the extra action button on the chosen boss. Each feed also hits the raid (Fishy Feedback)." },
+                    { name = "Crates", desc = "Break every crate within 25s or it explodes on the raid (Relic Rupture). Breaking one gives you a stacking Splinters bleed -- rotate breakers (Evoker Cauterizing Flame removes it)." },
+                    { name = "United Defense (Heroic+)", desc = "99% damage reduction when all three are within 30 yd. Doesn't apply on Normal." },
+                    { name = "Steady Strikes (Nama)", desc = "Stacking physical damage taken on the tank -- swap to control." },
+                    { name = "Shell Spin (Nama)", desc = "Three spinning shells at a player; clip = 4s stun. Sidestep." },
+                    { name = "Mighty Thud (Nama ult)", desc = "Nama leaps to 3 marked players in turn; damage is split among players within 6 yd -- soak each one." },
+                    { name = "Blink Nova (Iku)", desc = "Teleports to a player and novas -- ranged spread out." },
+                    { name = "Icebound Flames (Iku)", desc = "Interruptible: heavy damage + slow. Kick it." },
+                    { name = "Shredding Shards (Iku)", desc = "Stacking magic damage taken on the tank -- swap on it." },
+                    { name = "Frostfire Volley (Iku ult)", desc = "Fire or Frost debuffs that drop matching patches. Fire and Frost players must not overlap (Elemental Explosion). Clear your debuff in an opposite-element patch." },
+                    { name = "Explosive Surprise (Gebbo ult)", desc = "A bomb lands on a player -- drop it at the room edge, then jump a Bouncy Mushroom to clear the shockwave at the right moment. Bouncing early wipes the raid." },
+                    { name = "Death enrages", desc = "Each boss's death empowers the raid danger (Nama ramps damage, Iku raid fire, Gebbo knockback) -- kill together; if staggered: Gebbo, then Nama, then Iku." },
                 },
-                tankSwap = { trigger = "stacks", debuff = "Shredding Shards (Iku) / Steady Strikes (Nama)", stacks = "per application", note = "Two tanks split the trio; keep them apart." },
-                tank = "Split the trio -- Gebbo isolated, Nama and Iku apart. Taunt-swap on Shards/Strikes. Never let them stack (United Defense).",
-                healer = "Pre-plan CDs per ultimate window (Thud soaks, Volley + pool clears). Watch Icebound slows and Splinters ticks.",
-                dps = "Kick Icebound Flames. Balance all three HP bars to die together. Break crates on schedule -- a fish must be READY before every Energy cap; someone carries and uses it.",
-                positioning = "Three-point split; ranged loose in the middle baiting Blink Nova/Shell Spin away from camps. Pre-mark ultimate soak spots.",
-                wipes = "Missed fish feed (Empowered Ascension = wipe). Bosses stacked (99% DR). Thud circle overlaps. Uncleared Volley pools. Uneven HP at the end.",
+                tankSwap = { trigger = "stacks", debuff = "Steady Strikes (Nama) / Shredding Shards (Iku)", stacks = "per application", note = "Hold Nama plus one other boss in cleave; on Heroic keep the third 30+ yd away." },
+                tank = "Hold Nama plus one other boss in cleave range. Heroic: keep the third boss 30+ yd away (United Defense). Taunt-swap on Steady Strikes / Shredding Shards.",
+                healer = "Cooldowns for each ultimate (Mighty Thud soaks, Frostfire Volley) and the Fishy Feedback hits. Watch Splinters bleeds on crate breakers.",
+                dps = "Kick Icebound Flames. Break crates on a rotation -- a fish must be ready before each energy cap. Balance health so all three die together.",
+                positioning = "Two bosses stacked for cleave; on Heroic the third stays 30+ yd away. Gebbo's bomb goes to the room edge. Ranged spread for Blink Nova. Fire and Frost players apart during Frostfire Volley.",
+                wipes = "No fish fed when Mor'zahi's energy fills (Final Ascension). All three within 30 yd on Heroic (United Defense). Missed Mighty Thud soaks. Fire and Frost debuffs overlapping. Bouncing early on the mushroom. Unbroken crates exploding. Bosses dying far apart (death enrages).",
                 bloodlust = "On pull.",
-                addPriority = "No adds -- interrupts (Icebound Flames) + crate/fish logistics ARE the priority.",
+                addPriority = "No adds. Crates are the targets -- break them on a rotating crew. Kick Icebound Flames.",
             },
             {
                 name = "Vashnik the Malignant",
@@ -499,7 +503,7 @@ D.raids = {
                 tankSwap = { trigger = "stacks", debuff = "Dripping Fangs", stacks = "1", note = "Defensive on the swap hit." },
                 tank = "Park boss between the NEXT Imbibe pair before full Energy. Pick up adds. Defensive on swaps.",
                 healer = "CDs for Imbibe/Caustic Surge overlaps. Siphoning absorb needs the soak call, not heals. Dispel Exploding runners once clear.",
-                dps = "NOTHING reaches the center pool. Staggered Burning kills, then Clotting chain, Shrouded last. Grip/stack adds for cleave.",
+                dps = "NOTHING reaches the center pool. Staggered Burning kills, then Clotting chain, Shrouded last. Stack adds for cleave -- but gripping a Burning Venom doesn't stop it heading for the center pool.",
                 positioning = "Boss on the ring between active fountains; raid loosely behind; runners out; Froth lines outward; ranged spread for Catalytic Bile (Heroic).",
                 wipes = "Any add reaching center (Malignant Burst). Double Caustic Surge (Heroic). Late swaps. Wrong fountain position at Imbibe. Long fight = Toxic Vapor death.",
                 bloodlust = "On pull.",
@@ -523,7 +527,7 @@ D.raids = {
                     { name = "Corroding Venom", desc = "Tank stacking debuff -- swap ~6 stacks." },
                 },
                 tankSwap = { trigger = "combo + stacks", debuff = "Corroding Venom", stacks = "~6", note = "Also scripted swap inside each Apex Predator combo." },
-                tank = "Ravage away from raid; aim Mutilate into the soak group; dodge Tempest; swap on script. Heroic: drag boss/pools to the edge pre-Maelstrom so winds clear them.",
+                tank = "Ravage away from raid; aim Mutilate into the soak group; dodge Tempest; swap on script.",
                 healer = "Burst on Mutilate soaks and Crosswinds collisions. Track Surge runners (they carry DoTs). Top everyone before Maelstrom.",
                 dps = "Pure single-target -- hold 2-minute CDs for Dig In (+30% for 25s). Help place cysts correctly.",
                 positioning = "PRE-PULL: read the wind tunnels and place world markers OPPOSITE the wind clusters for cyst drops. Two pre-assigned Mutilate groups behind boss. Collapse middle before Maelstrom.",
@@ -534,19 +538,20 @@ D.raids = {
                 name = "The Twin Fangs",
                 order = 6,
                 bossType = "Two-boss even-kill, permanent poison economy",
-                tldr = "Nearly everything applies PERMANENT Eternal Venom stacks (lethal around 7-10 on Heroic); the ONLY removal is soaking Ithraz's Ravenous Feast -- the fight is bookkeeping who takes stacks and which team soaks each Feast hit. Kill both bosses together (survivor ramps +25% damage every 4s).",
+                tldr = "Two bosses that can't be moved and don't share health. Nearly everything applies PERMANENT Eternal Venom stacks -- 10 stacks kills on Heroic (11 on Normal = 85% max HP + stun). The ONLY removal is soaking Ithraz's Ravenous Feast, so the fight is bookkeeping who takes stacks and which team soaks each Feast strike. Kill both together -- the survivor's damage ramps every 4s.",
                 phases = {
-                    { name = "Main phase", desc = "Vexhul's globule/wave package + Ithraz's soak/pool package concurrently." },
-                    { name = "Intermission (100 Energy)", desc = "Bosses submerge, lower-HP heals up. Dodge Vile Flood (rotating beam -- read direction from the orbs, cross it once) + Sanguine Storm impact circles; solve Helical Toxins pairing (sum to 4)." },
+                    { name = "Main phase", desc = "Vexhul's globule/wave package + Ithraz's soak/pool package at the same time." },
+                    { name = "Intermission (100 Energy)", desc = "Bosses submerge and swap sides. Dodge Vile Flood (rotating beam -- read direction from the orbs, cross it once) + Sanguine Storm impact circles; solve Helical Toxins pairing (sum to 4)." },
                 },
                 abilities = {
-                    { name = "Eternal Venom", desc = "Permanent stacking DoT from most mechanics. ONLY removed by Ravenous Feast soaks. Treat 6+ stacks as critical." },
-                    { name = "Caustic Deluge (Vexhul)", desc = "Huge tank hit + knockback scattering Caustic Globules -- each needs ONE soaker (who takes 1 stack); any unsoaked = the WHOLE raid gains a stack." },
+                    { name = "Eternal Venom", desc = "Permanent stacking DoT from most mechanics. Lethal at 10 stacks on Heroic; 11 on Normal = 85% max HP + stun. ONLY removed by Ravenous Feast soaks." },
+                    { name = "Caustic Deluge (Vexhul)", desc = "Huge tank hit + knockback scattering Caustic Globules -- each needs ONE soaker (a low-stack player; they take 1 stack). Unsoaked, it bursts after 10s and the WHOLE raid gains a stack." },
                     { name = "Venomous Emergence (Vexhul)", desc = "Raid gains a stack; spawns 3 adds casting Corrosive Spit -- kill fast." },
                     { name = "Stir the Depths (Vexhul)", desc = "Raid hit + slow green waves to dodge (stack if hit)." },
                     { name = "Stone Breaker (Ithraz)", desc = "Three sequential white impact zones the tank soaks in order, then swaps." },
                     { name = "Coiling Ichor (Ithraz)", desc = "Red circles -- spread; drop the permanent pools at the arena EDGES." },
-                    { name = "Ravenous Feast (Ithraz)", desc = "Three consecutive group soaks; each removes one Eternal Venom stack from soakers. Feasted: after one soak you take +800% from the next -- Heroic needs THREE separate soak teams." },
+                    { name = "Ravenous Feast (Ithraz)", desc = "Three strikes in quick succession, each split among players within 14 yd; every player hit loses 1 Eternal Venom stack. Feasted: +800% Feast damage for 8s and no further removal -- nobody soaks twice. Heroic: three soak teams of 7+." },
+                    { name = "Uncoiled Wrath", desc = "If one boss dies first, the survivor's damage ramps every 4s without limit -- kill both within seconds of each other." },
                 },
                 tankSwap = { trigger = "rotation", debuff = "Deluge / Stone Breaker", stacks = "per sequence", note = "Swap after Caustic Deluge and after each full Stone Breaker set." },
                 tank = "One per boss, always in melee. Soak all three Stone Breaker zones in order. Deluge with CDs (big knockback).",
@@ -563,7 +568,7 @@ D.raids = {
                 bossType = "Three-phase duo: Zul'jan -> Malacrass -> both",
                 tldr = "P1 is venom logistics: collect Coalesced Venom orbs and feed them into Zul'jan's Sever frontal. P2 is Malacrass's mind controls plus look-to-freeze ghosts destroyed by Soul Sever. The INTERMISSION is the burn: revived Zul'jan takes +100% damage while healing 2%/sec -- Lust there and soak Fragments before they reach him. P3 runs both kits: stack, cleave, kill together.",
                 phases = {
-                    { name = "P1 -- Zul'jan", desc = "Toxic Deluge orbs, Sever frontals, Guillotine 5-man soaks, Axegrinders. Clear leftover orbs BEFORE pushing (they detonate)." },
+                    { name = "P1 -- Zul'jan", desc = "Toxic Deluge orbs, Sever frontals, Guillotine soaks (3+ players on Normal/Heroic), Axegrinders. Clear leftover orbs BEFORE pushing (they detonate)." },
                     { name = "P2 -- Malacrass", desc = "Dreadmarch mind controls (break absorbs before they leap off the edge), Manifestation ghosts (freeze by LOOKING at them, park in the Soul Sever lane), Gloombomb spreads, Eternal Nightfall shield-break." },
                     { name = "Intermission -- Soulbinding", desc = "Zul'jan revived at +100% damage taken, healing 2%/sec; Fragments crawl to him -- each soaked = raid damage (stagger soakers), each arriving = 10% heal. LUST HERE." },
                     { name = "P3 -- Coiled Union", desc = "Both active; Blighted Sever destroys orbs AND ghosts; Grim Guillotine adds a healing absorb. Even kill or survivor gains +500% damage/attack speed." },
@@ -571,7 +576,7 @@ D.raids = {
                 abilities = {
                     { name = "Toxic Deluge / Coalesced Venom", desc = "Green circles leave venom orbs; assigned collectors carry them into the boss's frontal lane." },
                     { name = "Sever", desc = "Tank frontal that destroys orbs in the cone (each pops a Venom Rupture) and amps its next cast -- taunt swap after EVERY cast; aim through the orb pile." },
-                    { name = "Guillotine", desc = "5+ player soak, then soakers sprint out (Widow's Kiss). Heroic: +500% from the next one -- two alternating soak groups." },
+                    { name = "Guillotine", desc = "Group soak -- 3+ players on Normal/Heroic (Sep 1 hotfix) -- then soakers sprint out (Widow's Kiss). Heroic: +500% from the next one -- two alternating soak groups." },
                     { name = "Dreadmarch", desc = "Mind controls players (absorb shield) walking to the edge to leap -- break the absorbs in time; Ring of Peace / Death Grip stalls. Breaking spawns ghosts." },
                     { name = "Unnerving Fixation (ghosts)", desc = "Ghost fixates a player and moves only when NOT looked at -- face it to freeze, kite to the Soul Sever stack point. Damage-immune otherwise." },
                     { name = "Soul Sever", desc = "Tank frontal destroying ghosts in the cone; hit players gain Gravebound -- grab three Soul Fragments before it expires or die. Taunt after each cast." },
@@ -585,39 +590,42 @@ D.raids = {
                 positioning = "P1: frontal lane with orb pile in front, Guillotine spot marked, avoid Noxious Ground sides. P2: ghost stack point in the Sever lane, Gloombombs outward. Intermission: ring around Zul'jan intercepting Fragments. P3: bosses stacked.",
                 wipes = "Uncontrolled Fragment soak overlap. Ghosts reaching fixate targets. Unkicked Nightfall/Wail. Missed frontal taunts. Gloombomb overlaps. MC'd players leaping. Leftover orbs at the P1 push.",
                 bloodlust = "Intermission (Soulbinding) -- Zul'jan at +100% damage taken.",
-                addPriority = "Break Dreadmarch MCs > Manifestations (via Soul Sever) > Abandoned Soulcoilers (kick Wail of Terror, Heroic) > bosses kept even in P3.",
+                addPriority = "Break Dreadmarch MCs > Manifestations (via Soul Sever) > Spiteful Soulcoilers (kick Wail of Terror, Heroic) > bosses kept even in P3.",
             },
             {
                 name = "Ula'tek",
                 order = 8,
-                bossType = "Three-phase final boss: eggs, soaks, shrinking platform, hard enrage",
-                tldr = "Offspring control is everything: Caustic Waves INSTANTLY hatch any egg they touch, and every hatch permanently raises raid-wide rot (Putrid Membrane) -- keep eggs out of wave lanes. P2 is an add gauntlet (kick Malice, disrupt Doomscale Eggs before they mature into a 20s raid stun). P3 shrinks the platform while Serpent's Bite venom is leeched between assigned partners. Burn the exposed Venomous Heart (+200%) windows and beat Fury Unleashed. NOTE: skipped PTR -- strategy still settling on live.",
+                bossType = "Final boss: two tanks (head + tail), egg/add control, shrinking platform",
+                tldr = "Keep BOTH the head and the tail tanked at all times. Keep eggs out of Caustic Waves -- carry them into Spectral Coils soaks so they hatch weak Rawlings instead of Vipers. Lust the first Rage of the Shackled and burn the exposed Venomous Heart. P2: Warden first (kick Malice), snap Grasping Fangs two at a time, feed the small eggs to the Cauldron before the big one. P3: everyone soaks Serpent's Bite circles; finish her before the platform runs out.",
                 phases = {
-                    { name = "P1 -- Fury of the Serpent Mother", desc = "Waves + eggs + Spectral Coil soaks + tank knockback loop. Rage of the Shackled exposes the Venomous Heart: +200% damage for 20s under falling debris." },
-                    { name = "P2 -- Children of the Doomscale", desc = "Adds: Wardens (KICK Malice), Doomscale Eggs (disrupt -> Weakened at +100% taken; ignored -> Ravenous with 20s raid-stun Dread Roar), Writhing Gestation growing clutches." },
-                    { name = "Intermission -- The Shattering", desc = "Constant Necrotic Vapors rot + another Spectral Coils sequence in shrinking space." },
-                    { name = "P3 -- Ula'tek's Ascension", desc = "P1 kit returns + Circling Prey destroys platform chunks + add waves + Serpent's Bite partner-leeching. Ends in Fury Unleashed hard enrage." },
+                    { name = "P1 -- Fury of the Serpent Mother", desc = "Dodge Caustic Waves and protect the eggs; two groups soak Spectral Coils at the tail. Rage of the Shackled exposes the Venomous Heart for 20s -- it shares health with the boss, so burst it." },
+                    { name = "P2 -- Children of the Doomscale", desc = "Raid splits into two groups on opposite ledges. Kill the Doomscale Warden first (kick Malice). Snap Grasping Fangs tethers two at a time. Feed eggs into the Doomscale Cauldron, small ones first and the big one last. Kill Blightscale Clutches within 20s." },
+                    { name = "Intermission -- The Shattering", desc = "The platform breaks apart. Keep alternating Spectral Coils soak groups." },
+                    { name = "P3 -- Ula'tek's Ascension", desc = "P1 mechanics return. Circling Prey destroys platform sections (within 13 yd is lethal). Everyone soaks Serpent's Bite circles. Blightscale Shriekers spawn. Fury Unleashed is the hard enrage." },
                 },
                 abilities = {
-                    { name = "Caustic Waves", desc = "Crossing venom waves -- dodge, and NEVER let one touch an egg (instant hatch)." },
-                    { name = "Blightscale Eggs", desc = "Can be CARRIED -- move them out of wave lanes. Every hatch = a Viper add + Putrid Membrane, a PERMANENT stacking raid tick." },
-                    { name = "Spectral Coils", desc = "Raid hit reduced per player in the impact zone -- assigned group soaks. Heroic: last group is barred from the next -- rotate 2+ groups." },
-                    { name = "Mother's Wrath / Rattler Slam", desc = "Tank knockback + Stone Venom stacks. If NO tank is in melee she slams the raid -- off-tank must be in melee BEFORE the knockback; return instantly." },
-                    { name = "Rage of the Shackled -> Venomous Heart", desc = "Raid-wide + falling debris; the Heart takes +200% damage for 20s -- the burn window." },
-                    { name = "Malice (Warden)", desc = "Heavy raid cast -- MUST interrupt." },
-                    { name = "Doomscale Eggs / Dread Roar", desc = "Disrupt -> Weakened (+100% taken; kick Anguished Cry, face Desperate Thrash away). Ignored -> Ravenous: ~20s raid stun. Heroic Mass Gestation: disrupting one starts the others on that side -- sequence carefully." },
-                    { name = "Serpent's Bite / Volatile Purge (P3)", desc = "Bitten player's venom leeched by an assigned partner standing close; partner then runs 7+ yards out before exploding (~5s). Untreated = death. PRE-ASSIGN PAIRS." },
-                    { name = "Circling Prey (P3)", desc = "Permanently destroys a platform section -- clear the zone, plan the shrinking space." },
-                    { name = "Fury Unleashed", desc = "Hard enrage: escalating massive damage per second." },
+                    { name = "Caustic Waves", desc = "Alternating venom waves -- stand opposite the wing she pulls back. Any egg or egg carrier it touches hatches a Viper. You can no longer swim under them." },
+                    { name = "Blightscale Eggs", desc = "Walk over one to pick it up (the carrier takes a DoT). Carry it into a Spectral Coils soak for a controlled hatch = weak Rawling. A wave hatch = Blightscale Viper + Putrid Membrane raid DoT." },
+                    { name = "Spectral Coils", desc = "Split damage -- about 40% of the raid in the impact brings it to minimum. Heroic: Soul Constrictor stops the last soakers from taking the next one, so rotate two groups." },
+                    { name = "Mother's Wrath / Stone Venom", desc = "Knocks back the current tank and stacks Stone Venom. Walk straight back into melee; swap as stacks build. (Damage nerfed twice in September.)" },
+                    { name = "Unchecked Rage / Rattler Slam", desc = "Raid damage whenever the head (Unchecked Rage) or tail (Rattler Slam) has nobody in melee. Never leave either part untanked." },
+                    { name = "Rage of the Shackled -> Venomous Heart", desc = "6.5s cast, then the Heart is exposed for 20s and takes heavily increased damage. Lust + all cooldowns here." },
+                    { name = "Malice (Doomscale Warden)", desc = "Interrupt or wipe." },
+                    { name = "Grasping Fangs", desc = "Tethers -- snap them two at a time. Heroic: each snap puts stacking Blight Vein on the whole raid." },
+                    { name = "Doomscale Eggs", desc = "Disrupted -> Weakened Doomscale (+100% damage taken; kick Anguished Cry, a 6s stun). Left alone -> Ravenous Doomscale, whose Dread Roar stuns the raid ~20s. Heroic Mass Gestation: disturbing one egg starts the others on that side." },
+                    { name = "Serpent's Bite (P3)", desc = "Circles on 1 melee, 1 healer, 1 ranged -- three soak groups, everyone soaks within 7 yd. Not cleared in 15s = Calcified Corpse (lethal, wipes the raid). Soakers then get Volatile Purge -- spread before it bursts (5s)." },
+                    { name = "Circling Prey (P3)", desc = "Destroys a platform section; standing within 13 yd is lethal. Move off early." },
+                    { name = "Petrifying Sting (Heroic, Vipers)", desc = "Petrifies everyone within 10 yd behind a healing absorb -- kill Vipers fast, don't stack on them." },
+                    { name = "Fury Unleashed", desc = "Hard enrage." },
                 },
-                tankSwap = { trigger = "stacks", debuff = "Stone Venom (Mother's Wrath)", stacks = "per knockback", note = "Off-tank in melee BEFORE the active tank is knocked -- any melee gap = Rattler Slam." },
-                tank = "Melee contact is the prime directive: pre-position against the knockback, sprint back instantly, swap on Stone Venom. Face all Doomscales away.",
-                healer = "Rot fight that only worsens -- every hatch permanently raises floor damage. Map CDs to Coils, Rage, Vapors, and Blight Vein breaks. Watch Petrifying Sting absorbs (Heroic) and Purge runners.",
-                dps = "Adds > boss almost always (Wardens > Clutches > Vipers). Kick Malice + Anguished Cry. Disrupt eggs on the called sequence. Burst the Heart windows. Beat the enrage.",
-                positioning = "Learn wave lanes; keep eggs and yourself out of them. Rotating Coil soak groups on marks. Doomscales faced out. P3: collapse toward surviving platform; Purge carriers run to dump spots.",
-                wipes = "Waves hatching eggs (permanent rot snowball). A Ravenous completing Dread Roar. Wrong Coil group (Soul Constrictor). Tank melee gap (Rattler Slam). Bite expiring / Purge exploding in the group. Running out of platform. Fury Unleashed.",
-                bloodlust = "During a Venomous Heart window (+200% amp). Optimal timing still unsettled on live.",
-                addPriority = "Doomscale Wardens (kick Malice) > Blightscale Clutches before full gestation > Vipers > Weakened/Ravenous Doomscales > boss.",
+                tankSwap = { trigger = "stacks", debuff = "Stone Venom (Mother's Wrath)", stacks = "as it builds", note = "Off-tank must already be in melee -- an untanked head or tail means raid damage." },
+                tank = "One tank on the head, one on the tail -- neither may leave melee. After a Mother's Wrath knockback, walk straight back in. Swap on Stone Venom. P3: pick up Blightscale Shriekers.",
+                healer = "Pressure stacks up: every Viper adds Putrid Membrane, and Heroic Grasping Fangs snaps add Blight Vein to the raid. Hold cooldowns for the P2 Fangs snaps, Spectral Coils, and the P3 platform breaks. Watch Petrifying Sting absorbs (Heroic).",
+                dps = "Full burst on the Heart during Rage of the Shackled. P2: Warden first, kick Malice, kill Clutches inside 20s, kick Anguished Cry. P3: kill the Shriekers. Everyone soaks Serpent's Bite.",
+                positioning = "P1: stand opposite the retracting wing; two soak groups at the tail. P2: two groups on opposite ledges. P3: get off a section before Circling Prey breaks it (13 yd lethal).",
+                wipes = "Head or tail left untanked. Waves hitting eggs or carriers (Viper + Membrane snowball). Snapping too many Fangs at once. Taking the big egg before the small ones. Missed Malice or Anguished Cry kicks. A Calcified Corpse from an unsoaked Serpent's Bite. Wasting the Heart window.",
+                bloodlust = "First Rage of the Shackled -- the Phase 1 Venomous Heart window.",
+                addPriority = "P2: Doomscale Warden (kick Malice) > Blightscale Clutch (within 20s) > Weakened Doomscale (kick Anguished Cry) > Vipers > boss. P3: Blightscale Shriekers before the boss.",
             },
         },
     },
@@ -661,6 +669,24 @@ for _, raid in ipairs(D.raids) do
         elseif boss.name == "Lightblinded Vanguard" then
             D.byName["lightblindedvanguard"] = boss
             D.byName["vanguard"] = boss
+        -- Season 2 (The Venomous Abyss): apostrophe-free + short-name aliases
+        elseif boss.name == "Nek'zali the Soulcoiler" then
+            D.byName["nekzali"] = boss
+            D.byName["nek'zali"] = boss
+            D.byName["nekzalithesoulcoiler"] = boss
+        elseif boss.name == "Entombed Sentinels" then
+            D.byName["sentinels"] = boss
+        elseif boss.name == "The Lost Explorers" then
+            D.byName["lostexplorers"] = boss
+            D.byName["explorers"] = boss
+        elseif boss.name == "Vashnik the Malignant" then
+            D.byName["vashnik"] = boss
+        elseif boss.name == "The Twin Fangs" then
+            D.byName["twinfangs"] = boss
+        elseif boss.name == "The Coiled Altar" then
+            D.byName["coiledaltar"] = boss
+        elseif boss.name == "Ula'tek" then
+            D.byName["ulatek"] = boss
         end
     end
 end

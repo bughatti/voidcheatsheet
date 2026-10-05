@@ -1,6 +1,6 @@
 # VoidCheatSheet
 
-**In-game cheat sheets for every Midnight Season 1 raid, M+ dungeon, and delve boss — auto-pops on pull.**
+**In-game cheat sheets for every Midnight raid, the full Mythic+ pool, and delve bosses — auto-pops on pull.**
 
 Hand-curated, role-aware boss strategy panel with mechanics, phase breakdowns, dangerous trash notes, and Tank/Healer/DPS-specific tips. No theorycrafting required — just pull the boss and read.
 
@@ -8,10 +8,11 @@ Hand-curated, role-aware boss strategy panel with mechanics, phase breakdowns, d
 
 ## Features
 
-- **53 encounters** across raids, M+ dungeons, and delves
-- **9 raid bosses** across 3 raids (Voidspire, Dreamrift, March on Quel'Danas)
-- **31 dungeon bosses** across 8 M+ dungeons (Magisters' Terrace, Maisara Caverns, Nexus-Point Xenas, Windrunner Spire, Algeth'ar Academy, Seat of the Triumvirate, Skyreach, Pit of Saron)
-- **13 delve bosses** across 10 delves + Nemesis (Torment's Rise)
+- **96 encounters** across raids, M+ dungeons, and delves — Season 1 and Season 2
+- **17 raid bosses** across 4 raids: **The Venomous Abyss** (Season 2), plus Voidspire, Dreamrift, March on Quel'Danas
+- **57 dungeon bosses** across 16 dungeons — the full **Season 2 Mythic+ pool** (Altar of Fangs, Murder Row, Den of Nalorakk, The Blinding Vale, Voidscar Arena, Kings' Rest, Ruby Life Pools, Temple of Sethraliss) plus the Season 1 pool
+- **22 delve bosses** across 14 delves — including Season 2's **Venomfall Deeps** Nemesis (Azta'rec), **The Ring of Glory**, **Gnarldor Isle**, and the new "Children of Ula'tek" story bosses
+- **Kept current with hotfixes** — strategies re-checked against live guides and Blizzard's hotfix notes
 - **Auto-popup** when targeting a boss or on `ENCOUNTER_START`
 - Every ability with descriptions and what to do
 - Phase breakdowns, positioning tips, common wipe causes
@@ -32,6 +33,8 @@ Hand-curated, role-aware boss strategy panel with mechanics, phase breakdowns, d
 | Command | Action |
 |---|---|
 | `/cs` | Show full content list (raids, dungeons, delves) |
+| `/cs venomous` | Show all Venomous Abyss bosses |
+| `/cs ulatek` | Show a specific boss (works without the apostrophe) |
 | `/cs voidspire` | Show all Voidspire bosses |
 | `/cs magisters` | Show Magisters' Terrace dungeon guide |
 | `/cs darza` | Show specific boss (e.g. Blademaster Darza) |
@@ -66,10 +69,11 @@ Hand-curated, role-aware boss strategy panel with mechanics, phase breakdowns, d
 
 ## Data Sources
 
-All boss mechanics verified against:
+Boss mechanics are cross-checked across multiple guides — each claim against at least two independent sources where possible — and re-checked against Blizzard's official hotfix notes:
 - [Wowhead](https://www.wowhead.com) dungeon/raid/delve guides
 - [Icy Veins](https://www.icy-veins.com) boss strategy guides
-- [Method.gg](https://www.method.gg) M+ and delve guides
+- [Method.gg](https://www.method.gg) raid, M+ and delve guides
+- Blizzard's official hotfix posts
 
 ---
 
