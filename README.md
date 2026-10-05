@@ -87,3 +87,5 @@ All boss mechanics verified against:
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+*Part of the Void addon family · free M+ & raid player lookups at [voidscout.io](https://voidscout.io)*
