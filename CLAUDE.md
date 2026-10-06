@@ -2,7 +2,7 @@
 
 **CurseForge Project ID:** 1512422 (originally; check current)
 **Public repo:** `bughatti/voidcheatsheet`
-**Status:** Published. 5 files, 53 encounters (9 raid + 31 dungeon + 13 delve).
+**Status:** Published (v2.4.0, 2026-10-05). 96 encounters (17 raid + 57 dungeon + 22 delve), Season 1 + Season 2. Policy: only change a claim when 2+ independent guides agree; single-source content is flagged in-game.
 
 ## Features
 
