@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.4.1] — 2026-10-06
+
+### Fixed
+- **`/cs <boss name>` works again** (`/cs ulatek`, `/cs darza`…). It had been throwing an error since 2.2.0; only raid and dungeon names worked.
+- **`/cs altaroffangs`, `/cs kingsrest`** and other names without spaces or apostrophes now find their dungeon.
+- **Plain `/cs` inside a dungeon** opens that dungeon's sheet instead of the full list.
+- **Share works in follower and Dungeon Finder groups** (it said "You aren't in a party"), and long tips no longer stop the share after the first line.
+- The card says **[Dungeon]** in normal/heroic/follower runs and **[M+]** only in keystones and Mythic.
+- Clearer message when you `/cs share` without a boss open.
+- The Void addons info panel (`/vhub info`) now lists only the addons you can actually get, with up-to-date descriptions.
+
 ## [2.4.0] — 2026-10-05
 
 ### Added
