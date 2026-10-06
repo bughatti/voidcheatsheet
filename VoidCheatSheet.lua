@@ -41,6 +41,48 @@ local ROLE_LABELS = {
     dps = "DPS",
 }
 
+-- "[M+]" only inside a keystone or a Mythic dungeon; "[Dungeon]" otherwise
+-- (Normal/Heroic/follower runs were all labelled M+).
+local function DungeonTag()
+    local inKey = C_ChallengeMode and C_ChallengeMode.GetActiveChallengeMapID
+        and (C_ChallengeMode.GetActiveChallengeMapID() or 0) > 0
+    local _, instType, diff = GetInstanceInfo()
+    if inKey or (instType == "party" and (diff == 8 or diff == 23)) then return "[M+]" end
+    if instType ~= "party" then return "[M+]" end   -- browsing from outside: the pool is the M+ pool
+    return "[Dungeon]"
+end
+
+-- Chat channel for Share. LFG/LFR/follower groups are instance groups: PARTY fails there
+-- with "You aren't in a party", so INSTANCE_CHAT must win. nil when solo.
+local function GetShareChannel()
+    if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then return "INSTANCE_CHAT" end
+    if IsInRaid() then return "RAID" end
+    if IsInGroup() then return "PARTY" end
+    return nil
+end
+
+-- SendChatMessage throws "Chat message limits exceeded" for lines over 255 bytes or a
+-- burst of lines, which aborted the share after line 1. Strip colors, split long lines on
+-- word boundaries, and pace the queue so a full share always goes out.
+local CHAT_MAX, CHAT_GAP = 250, 0.35
+local chatQueue, chatBusy = {}, false
+local function PumpChat()
+    local item = table.remove(chatQueue, 1)
+    if not item then chatBusy = false; return end
+    pcall(SendChatMessage, item[1], item[2])
+    C_Timer.After(CHAT_GAP, PumpChat)
+end
+local function SendChunked(text, channel)
+    text = ((text or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""))
+    while #text > CHAT_MAX do
+        local cut = text:sub(1, CHAT_MAX):match("^.*() ") or CHAT_MAX
+        chatQueue[#chatQueue + 1] = { text:sub(1, cut - 1), channel }
+        text = text:sub(cut + 1)
+    end
+    if text ~= "" then chatQueue[#chatQueue + 1] = { text, channel } end
+    if not chatBusy then chatBusy = true; PumpChat() end
+end
+
 local function GetPlayerRole()
     local role = "dps"
     pcall(function()
@@ -230,15 +272,15 @@ local function CreateCheatFrame()
     shareTxt:SetAllPoints()
     shareBtn:SetScript("OnClick", function()
         if f.currentBoss then
-            local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+            local channel = GetShareChannel()
             if channel then
                 local boss = f.currentBoss
-                SendChatMessage("[VoidCheatSheet] " .. boss.name, channel)
-                SendChatMessage("TL;DR: " .. boss.tldr:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), channel)
+                SendChunked("[VoidCheatSheet] " .. boss.name, channel)
+                SendChunked("TL;DR: " .. (boss.tldr or ""), channel)
                 local role = GetPlayerRole()
                 local tip = boss[role]
                 if tip then
-                    SendChatMessage(ROLE_LABELS[role] .. ": " .. tip:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), channel)
+                    SendChunked(ROLE_LABELS[role] .. ": " .. tip, channel)
                 end
                 print(C_CYAN .. "VoidCheatSheet:|r Shared to " .. channel)
             else
@@ -344,6 +386,12 @@ end
 ----------------------------------------------------------------------
 local tooltipFrame
 
+-- Forward declaration: ShowBoss is called by the tooltip click handler below and by
+-- the /cs slash handler, but defined further down. It MUST be declared before its
+-- first use — a second `local ShowBoss` after the definition shadows it with nil
+-- (that broke every `/cs <boss>` lookup from 2.2.0 to 2.4.0).
+local ShowBoss
+
 local function CreateTooltipFrame()
     if tooltipFrame then return tooltipFrame end
 
@@ -443,7 +491,7 @@ local function ShowTooltip(boss)
     local playerRole = GetPlayerRole()
     local typeTag = ""
     if boss.contentType == "dungeon" then
-        typeTag = C_ORANGE .. "[M+] " .. "|r"
+        typeTag = C_ORANGE .. DungeonTag() .. " |r"
     elseif boss.contentType == "delve" then
         typeTag = C_PURPLE .. "[Delve] " .. "|r"
     else
@@ -489,7 +537,7 @@ local function BuildCheatText(boss, playerRole)
 
     -- Content type badge
     if boss.contentType == "dungeon" then
-        L(C_ORANGE .. "[MYTHIC+ DUNGEON]|r")
+        L(C_ORANGE .. (DungeonTag() == "[M+]" and "[MYTHIC+ DUNGEON]" or "[DUNGEON]") .. "|r")
     elseif boss.contentType == "delve" then
         L(C_PURPLE .. "[DELVE]|r")
     end
@@ -668,33 +716,21 @@ end
 ----------------------------------------------------------------------
 -- Find instance by name (fuzzy) — raids, dungeons, delves
 ----------------------------------------------------------------------
+-- "Altar of Fangs" / "altaroffangs" / "Kings' Rest" / "kingsrest" all compare equal.
+local function NormKey(s)
+    return ((s or ""):lower():gsub("[%s%-']", ""))
+end
+
 local function FindInstance(search)
     if not search or search == "" then return nil end
-    search = search:lower()
+    search = NormKey(search)
+    if search == "" then return nil end
 
-    -- Search raids
-    if D.raids then
-        for _, raid in ipairs(D.raids) do
-            if raid.name:lower():find(search, 1, true) then
-                return raid, "raid"
-            end
-        end
-    end
-
-    -- Search dungeons
-    if D.dungeons then
-        for _, dng in ipairs(D.dungeons) do
-            if dng.name:lower():find(search, 1, true) then
-                return dng, "dungeon"
-            end
-        end
-    end
-
-    -- Search delves
-    if D.delves then
-        for _, delve in ipairs(D.delves) do
-            if delve.name:lower():find(search, 1, true) then
-                return delve, "delve"
+    local groups = { { D.raids, "raid" }, { D.dungeons, "dungeon" }, { D.delves, "delve" } }
+    for _, g in ipairs(groups) do
+        for _, inst in ipairs(g[1] or {}) do
+            if NormKey(inst.name):find(search, 1, true) then
+                return inst, g[2]
             end
         end
     end
@@ -787,7 +823,7 @@ local function ShowInstance(inst, instType)
 
     local typeTag = ""
     if instType == "dungeon" then
-        typeTag = C_ORANGE .. "[M+] " .. "|r"
+        typeTag = C_ORANGE .. DungeonTag() .. " |r"
     elseif instType == "delve" then
         typeTag = C_PURPLE .. "[Delve] " .. "|r"
     end
@@ -935,11 +971,6 @@ local tooltipHideTimer = nil
 local syncTimer = nil
 local currentEncounterDifficulty = nil
 local currentEncounterInstanceID = nil
-
--- Forward declaration: ShowBoss is referenced by tooltip OnMouseDown closures
--- (CreateTooltipFrame, around line 400) but defined further down (line 603).
--- Declaring local here avoids the implicit-global taint pattern.
-local ShowBoss
 
 local function OnTargetChanged(unit)
     if not autoPopupEnabled then return end
@@ -1253,25 +1284,24 @@ end)
 -- Share to chat
 ----------------------------------------------------------------------
 local function ShareBossToChat(boss)
-    local channel = IsInRaid() and "RAID" or IsInGroup() and "PARTY" or nil
+    local channel = GetShareChannel()
     if not channel then
         print(C_CYAN .. "VoidCheatSheet:|r Must be in a group to share.")
         return
     end
 
-    local role = GetPlayerRole()
-    SendChatMessage("[VoidCheatSheet] " .. boss.name, channel)
-    SendChatMessage("TL;DR: " .. boss.tldr:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), channel)
+    SendChunked("[VoidCheatSheet] " .. boss.name, channel)
+    SendChunked("TL;DR: " .. (boss.tldr or ""), channel)
 
     if boss.bloodlust then
-        SendChatMessage("Bloodlust: " .. boss.bloodlust:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), channel)
+        SendChunked("Bloodlust: " .. boss.bloodlust, channel)
     end
 
     -- Share all role tips
     for _, r in ipairs({"tank", "healer", "dps"}) do
         local tip = boss[r]
         if tip then
-            SendChatMessage(ROLE_LABELS[r] .. ": " .. tip:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), channel)
+            SendChunked(ROLE_LABELS[r] .. ": " .. tip, channel)
         end
     end
 
@@ -1300,6 +1330,15 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
     msg = strtrim(msg):lower()
 
     if msg == "" then
+        -- Inside a covered raid/dungeon/delve, open that instance's sheet instead of the
+        -- full content list (the list starts at Voidspire, which is never what you want there).
+        if IsInInstance() then
+            local ok, inst, instType = pcall(function() return FindInstance((GetInstanceInfo())) end)
+            if ok and inst then
+                ShowInstance(inst, instType)
+                return
+            end
+        end
         ShowBossList()
         return
     end
@@ -1524,7 +1563,7 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         if boss then
             ShareBossToChat(boss)
         else
-            print(C_CYAN .. "VoidCheatSheet:|r No boss selected. Use /cs <boss> first.")
+            print(C_CYAN .. "VoidCheatSheet:|r Share sends one boss. Open a boss first (e.g. /cs ulatek), then /cs share.")
         end
         return
     end
@@ -1542,10 +1581,10 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         ShowBoss(boss)
     else
         print(C_CYAN .. "VoidCheatSheet:|r Not found: " .. msg)
-        print(C_DIM .. "Raids: /cs voidspire, /cs dreamrift, /cs queldanas|r")
+        print(C_DIM .. "Raids: /cs venomous, /cs voidspire, /cs dreamrift, /cs queldanas|r")
         if D.dungeons and #D.dungeons > 0 then
             local names = {}
-            for _, d in ipairs(D.dungeons) do names[#names + 1] = d.name:lower():gsub("%s+", "") end
+            for _, d in ipairs(D.dungeons) do names[#names + 1] = NormKey(d.name) end
             print(C_DIM .. "Dungeons: /cs " .. table.concat(names, ", /cs ") .. "|r")
         end
         if D.delves and #D.delves > 0 then
