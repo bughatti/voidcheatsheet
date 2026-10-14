@@ -81,7 +81,7 @@ Anything only one guide documents so far is flagged on its page.
 
 ## Compatibility
 
-- **WoW 12.1** (Midnight Season 2)
+- **WoW 12.1.5** (Midnight Season 2)
 - Standalone — nothing else to install
 - Works alongside DBM, BigWigs, and any UI replacement
 

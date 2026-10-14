@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.2] — 2026-10-14
+
+### Changed
+- Updated for WoW 12.1.5 — no longer shows as out of date.
+
 ## [2.4.1] — 2026-10-06
 
 ### Fixed
