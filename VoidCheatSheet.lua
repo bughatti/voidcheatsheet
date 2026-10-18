@@ -1022,12 +1022,17 @@ local function OnTargetChanged(unit)
     -- caught by pcall but loud as "Target error:" prints. Method 2 (GUID)
     -- works fine on tainted units, so loss of Method 1 is harmless in
     -- instances. Open world / friendly targets still go through here.
+    -- "scenario" = delves + the Labyrinth of Kindo'jan: enemy names/GUIDs are secret
+    -- there too (12.1.5 -- spammed "Target error" on every target swap in the Labyrinth).
+    local isSecret = (VoidLib and VoidLib.Secrets and VoidLib.Secrets.IsSecret)
+        or (issecretvalue and function(v) return issecretvalue(v) end)
+        or function() return false end
     local _, instType = IsInInstance()
     local stringsTainted = (instType == "raid" or instType == "party"
-        or instType == "arena" or instType == "pvp")
+        or instType == "arena" or instType == "pvp" or instType == "scenario")
     if not stringsTainted then
         local rawName = UnitName(unit)
-        if rawName then
+        if rawName and not isSecret(rawName) then
             local scrubbed = VoidLib and VoidLib.Secrets
                 and VoidLib.Secrets.SafeKey(rawName) or rawName
             local ok, result = pcall(FindBoss, scrubbed)
@@ -1040,7 +1045,8 @@ local function OnTargetChanged(unit)
     -- Method 2: NPC ID from GUID (works if GUID isn't tainted)
     if not boss then
         local guidOk, guid = pcall(UnitGUID, unit)
-        if guidOk and guid then
+        -- a SECRET guid can't be split/compared -- strsplit on it was the uncaught error
+        if guidOk and guid and not isSecret(guid) then
             -- Only Creature/Vehicle/Pet GUIDs have an NPC ID in slot 6.
             -- Player GUIDs put a realm-relative ID there which can collide.
             local guidType = strsplit("-", guid)
@@ -1389,20 +1395,24 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
         print(C_CYAN .. "VoidCheatSheet scan:|r")
         print(("  Zone: %s  (mapID=%s, instanceType=%s, difficultyID=%s, instanceID=%s)"):format(
             tostring(zoneName), tostring(mapID), tostring(instanceType), tostring(difficultyID), tostring(instanceID)))
+        local function sec(v) return issecretvalue and issecretvalue(v) end
+        local function show(v) return sec(v) and "(secret)" or tostring(v) end
         if UnitExists("target") then
             local guid = UnitGUID("target")
-            local guidType, _, _, _, _, npcID = strsplit("-", guid or "")
+            local guidType, npcID
+            if not sec(guid) then guidType, _, _, _, _, npcID = strsplit("-", guid or "") end
             print(("  Target: %s  (npcID=%s, guidType=%s, classification=%s, level=%s)"):format(
-                tostring(UnitName("target")), tostring(npcID), tostring(guidType),
+                show(UnitName("target")), tostring(npcID or "(secret)"), tostring(guidType),
                 tostring(UnitClassification("target")), tostring(UnitLevel("target"))))
         else
             print("  Target: none")
         end
         if UnitExists("mouseover") then
             local guid = UnitGUID("mouseover")
-            local guidType, _, _, _, _, npcID = strsplit("-", guid or "")
+            local guidType, npcID
+            if not sec(guid) then guidType, _, _, _, _, npcID = strsplit("-", guid or "") end
             print(("  Mouseover: %s  (npcID=%s, guidType=%s)"):format(
-                tostring(UnitName("mouseover")), tostring(npcID), tostring(guidType)))
+                show(UnitName("mouseover")), tostring(npcID or "(secret)"), tostring(guidType)))
         end
         if C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo then
             local level, affixes = C_ChallengeMode.GetActiveKeystoneInfo()

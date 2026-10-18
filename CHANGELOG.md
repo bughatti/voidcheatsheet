@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.3] — 2026-10-18
+
+### Fixed
+- **"Target error: attempt to perform string conversion on a secret string value" spam** in delves and the Labyrinth of Kindo'jan. Targeting an enemy there no longer prints an error.
+
 ## [2.4.2] — 2026-10-14
 
 ### Changed
