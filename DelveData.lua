@@ -571,6 +571,74 @@ D.delveTips = {
 }
 
 ----------------------------------------------------------------------
+-- 12.1.5: THE LABYRINTH OF KINDO'JAN (SE Eversong, Zul'Aman border)
+-- Nine-chamber delve-like challenge; final boss room (north, via Akil'zon's
+-- Roost) opens only after all 9 chambers are cleared on Tier 8+ in one run.
+-- Name MUST match GetInstanceInfo() ("The Labyrinth of Kindo'jan", verified
+-- in game 2026-10-18 via /cs scan: instanceType=scenario, instanceID 3043).
+-- Sources: Method.gg boss guide (Oct 10), Skycoach (Oct 13), ExpCarry (Oct 9,
+-- PTR-based). Kept only facts 2+ agree on; Skycoach often paraphrases Method,
+-- so treat details as provisional until verified on a live kill.
+----------------------------------------------------------------------
+D.delves[#D.delves + 1] = {
+    name = "The Labyrinth of Kindo'jan",
+    -- Per-room tips, keyed by the room's scenario stage name (exactly as the objective
+    -- tracker shows it). Filled from live runs -- only add a tip once it's been seen.
+    rooms = {
+        ["Empty Halls"] = "Between rooms / all done. Pick the next chamber, or speak to Kinduru to end the run.",
+        ["Choose Your Path"] = "Pick the next door -- or talk to Kinduru to end the run and take your rewards.",
+        ["Taken Antiquities"] = "Recover the stolen antiquities.",
+        ["Malicious Masks"] = "Deal with the masks -- check the tracker for the count.",
+        ["Soul Survivor"] = "Defeat the Hexbound Defenders to free the Soul King.",
+        ["Vile Intruders"] = "Repel the Vilebranch -- the bar fills as you kill them.",
+        ["The Wandering"] = "Find the Vessel.",
+        ["A Foul Presence"] = "Kill the Undead (12) -- the Chamber of Rites.",
+    },
+    bosses = {
+        {
+            name = "Den'zara",
+            order = 1,
+            contentType = "delve",
+            bossType = "Gatekeeper (north boss room, before Kindo'jan)",
+            tldr = "Unlocked by clearing all 9 chambers on Tier 8+. A straightforward kill -- her death summons Kindo'jan. Use the waystone + Altar of Corrosion in the room first.",
+            abilities = {},
+            companion = "Set Valeera's role for Kindo'jan BEFORE pulling Den'zara (DPS to kick Amani Aegis, Healer if you struggle to survive).",
+            tank = "Straightforward kill; save cooldowns for Kindo'jan.",
+            healer = "N/A (solo content).",
+            dps = "Save Bloodlust/Heroism and big cooldowns for Kindo'jan phase 2.",
+            wipes = "Rarely the problem -- prepare for the next fight.",
+        },
+        {
+            name = "Kindo'jan",
+            order = 2,
+            contentType = "delve",
+            bossType = "Final boss: P1 -> 4-Loa intermission (~70%) -> P2 with random Loa",
+            tldr = "3 avoidable hits (Disgraceful Display stacks) = run over. #1 killer: Mojo puddles -- when the circle is on you, RUN to the edge before it drops; never stand in green. Then: kill Headhunters, step out of Crushing Blow, kick Amani Aegis. At ~70% he vanishes: Akil'zon (safe gaps) > Halazzi (stand in ONE line) > Nalorakk (gap near middle) > Jan'alai (soak your circle). Lust in P2.",
+            abilities = {
+                { name = "Disgraceful Display", desc = "You gain a stack for every avoidable mechanic that hits you. 3 stacks ends the fight -- play clean." },
+                { name = "Eruption of Mojo", desc = "Every ~8 sec a circle goes on you (or Valeera) for 3.5 sec, then drops a permanent green puddle (Erratic Mojo) where you stand. RUN TO THE EDGE, away from the boss and Valeera, wait for it to drop, come back. (Seen in our logs: 5s, 13s, 21s, 29s.)" },
+                { name = "Erratic Mojo (puddles)", desc = "The green puddles left behind. Every tick you stand in one counts against you -- in our wipe, standing in them for ~13 sec was the death. Keep the boss area clean." },
+                { name = "Whirling Axes", desc = "4 spinning axes -- dodge them, they hit hard." },
+                { name = "Hash'ey's Command", desc = "Summons 4 Amani Headhunters that cast Axe Barrage (circles under you). Kill them; keep moving out of the circles." },
+                { name = "Crushing Blow", desc = "Big frontal circle -- get out. Also summons an Amani Juggernaut." },
+                { name = "Phalanx Charge (Juggernaut)", desc = "Knockback across almost half the room. Don't stand near an edge; angle it so it can't throw you into a Loa mechanic." },
+                { name = "Amani Aegis (Juggernaut)", desc = "INTERRUPT -- otherwise the Juggernaut and nearby enemies take 33% less damage." },
+                { name = "Intermission 1 -- Akil'zon", desc = "Winds push you toward the edge; some zones kill instantly. Stand in a safe gap and walk against the wind." },
+                { name = "Intermission 2 -- Halazzi", desc = "Shadow cats pin Valeera (Predator's Guile). Stand in ONE line to free her (several lines spawns an extra add). If you don't, she goes UNCONSCIOUS -- and then nobody soaks her Jan'alai circle 30 sec later, which kills you (our 3rd wipe)." },
+                { name = "Intermission 3 -- Nalorakk", desc = "Rows of bears charge. Stand in a gap near the middle, then turn for the second row." },
+                { name = "Intermission 4 -- Jan'alai", desc = "Two soak circles (Cleansing Flame), ~12 sec to get in. Valeera takes one, you MUST take the other -- an unsoaked circle hits you for ~1.2M and kills you. Needs Valeera ALIVE (see Halazzi)." },
+            },
+            companion = "DPS Valeera to interrupt Amani Aegis; Healer if survival is the problem. Corrosive powers: Ula'tek's Gift + Insidious Venom.",
+            tank = "Stay near the boss until axes spawn, then use the center. Kill Headhunters fast.",
+            healer = "N/A (solo content).",
+            dps = "Bloodlust/Heroism + cooldowns at the start of P2. Kick Amani Aegis. Never take a 3rd avoidable hit.",
+            wipes = "3 Disgraceful Display stacks. Juggernaut knockback during Akil'zon / Jan'alai. Missing your Jan'alai soak. Mojo puddles dropped in the middle.",
+            bloodlust = "Phase 2 (after the 4-Loa intermission).",
+        },
+    },
+}
+
+----------------------------------------------------------------------
 -- Register delve bosses in byName lookup
 ----------------------------------------------------------------------
 for _, delve in ipairs(D.delves) do
@@ -607,6 +675,8 @@ for _, delve in ipairs(D.delves) do
                 -- already covered
             elseif boss.name == "Mul'tha'ul" then
                 D.byName["multhaul"] = boss
+            elseif boss.name == "Kindo'jan" then
+                D.byName["labyrinth"] = boss
             elseif boss.name == "Esuritus" then
                 -- already covered
             end
