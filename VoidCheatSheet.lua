@@ -814,11 +814,148 @@ end
 ----------------------------------------------------------------------
 -- Show all bosses for an instance (raid, dungeon, or delve)
 ----------------------------------------------------------------------
+----------------------------------------------------------------------
+-- Labyrinth of Kindo'jan room tracker. Rooms aren't boss encounters (no
+-- ENCOUNTER_END), they're SCENARIO STAGES -- the same data behind the
+-- objective tracker. A stage only advances when its objective is done, so
+-- "the stage name changed away from a room" = that room is cleared. Per run:
+-- reset when you zone in fresh (not on /reload). Hub stage = "Empty Halls".
+----------------------------------------------------------------------
+local LAB_NAME, LAB_HUB, LAB_ROOMS = "The Labyrinth of Kindo'jan", "Empty Halls", 9
+-- Between-room stages: never counted as a cleared room (verified in game 2026-10-18 --
+-- "Choose Your Path" shows after each room while you pick the next door).
+local LAB_HUBS = { ["Empty Halls"] = true, ["Choose Your Path"] = true,
+    -- the boss chamber is a stage too, not one of the 9 rooms (counted 12/9 on the kill run)
+    ["Soul of the Labyrinth"] = true }
+
+local function InLabyrinth()
+    local name = GetInstanceInfo()
+    return name == LAB_NAME
+end
+
+local function LabState()
+    VoidCheatSheetDB.lab = VoidCheatSheetDB.lab or { cleared = {}, count = 0 }
+    local s = VoidCheatSheetDB.lab
+    -- drop any hub stage an older build counted as a room
+    for hub in pairs(LAB_HUBS) do
+        if s.cleared[hub] then s.cleared[hub] = nil; s.count = math.max(0, (s.count or 1) - 1) end
+    end
+    return s
+end
+
+-- current stage name + objective lines, straight from the scenario API
+local function LabStage()
+    if not (C_ScenarioInfo and C_ScenarioInfo.GetScenarioStepInfo) then return nil end
+    local ok, st = pcall(C_ScenarioInfo.GetScenarioStepInfo)
+    if not ok or not st or not st.title or st.title == "" then return nil end
+    local crit = {}
+    for i = 1, (st.numCriteria or 0) do
+        local ok2, c = pcall(C_ScenarioInfo.GetCriteriaInfo, i)
+        if ok2 and c and c.description and c.description ~= "" then
+            local prog = ""
+            if c.totalQuantity and c.totalQuantity > 1 then
+                prog = (" %d/%d"):format(c.quantity or 0, c.totalQuantity)
+            elseif c.isWeightedProgress and c.quantity then
+                prog = (" %d%%"):format(c.quantity)
+            end
+            crit[#crit + 1] = (c.completed and "|cff55ff55" or "|cffffffff") .. c.description .. prog .. "|r"
+        end
+    end
+    return st.title, crit, st.description
+end
+
+local function LabTier()
+    local _, _, _, diffName = GetInstanceInfo()
+    return diffName and tonumber(tostring(diffName):match("(%d+)"))
+end
+
+-- Called on every scenario update while inside: count a room when we LEAVE it.
+local function LabTrack()
+    if not InLabyrinth() then return end
+    local s = LabState()
+    local stage = LabStage()
+    if stage and stage ~= s.current then
+        if s.current and not LAB_HUBS[s.current] and not s.cleared[s.current] then
+            s.cleared[s.current] = true
+            s.count = (s.count or 0) + 1
+        end
+        s.current = stage
+    end
+    -- the hub's own text says when every chamber is done -- trust it over our count
+    if stage == LAB_HUB then
+        local _, _, desc = LabStage()
+        if desc and desc:lower():find("cleared all chambers", 1, true) then s.count = math.max(s.count or 0, LAB_ROOMS) end
+    end
+end
+
+-- Restored Coffer Keys (a currency in Midnight). The end-of-run Bountiful Coffers each
+-- need one, and a full Tier 8+ run gives 3 -- with 0 keys you leave the gear behind.
+-- ID found by NAME once (no hardcoded id to go stale), cached for the session.
+local keyCurrencyID
+local function CofferKeys()
+    if keyCurrencyID == nil then
+        keyCurrencyID = false
+        if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
+            for id = 2800, 3800 do
+                local ok, c = pcall(C_CurrencyInfo.GetCurrencyInfo, id)
+                if ok and c and c.name == "Restored Coffer Key" then keyCurrencyID = id; break end
+            end
+        end
+    end
+    if not keyCurrencyID then return nil end
+    local ok, c = pcall(C_CurrencyInfo.GetCurrencyInfo, keyCurrencyID)
+    return ok and c and c.quantity or nil
+end
+
+local function LabProgressLines(inst, L)
+    local s = LabState()
+    local keys = CofferKeys()
+    -- Outside the Labyrinth: no run in progress, just what to bring next time.
+    if not InLabyrinth() then
+        L(C_PURPLE .. "== BEFORE YOUR NEXT RUN ==|r")
+        if keys then
+            L((keys < 3 and C_RED or C_GREEN) .. ("Coffer Keys: %d -- a full Tier 8+ run ends with 3 chests that need 3 keys."):format(keys) .. "|r")
+        end
+        L(C_DIM .. "Room tracking starts when you enter.|r")
+        L("")
+        return true
+    end
+    local stage, crit = LabStage()
+    local tier = LabTier()
+    local n = math.min(s.count or 0, LAB_ROOMS)
+    L(C_PURPLE .. "== LABYRINTH PROGRESS ==|r")
+    L(C_WHITE .. (tier and ("Tier " .. tier .. "  -  ") or "") .. "Rooms cleared: " .. C_GOLD .. n .. "/" .. LAB_ROOMS .. "|r")
+    if keys then
+        if keys < 3 then
+            L(C_RED .. ("Coffer Keys: %d -- the 3 end-of-run chests need 3. Without keys they stay locked."):format(keys) .. "|r")
+        else
+            L(C_GREEN .. ("Coffer Keys: %d -- enough for the 3 end-of-run chests."):format(keys) .. "|r")
+        end
+    end
+    if stage then
+        L(C_WHITE .. "Now: " .. C_CYAN .. stage .. "|r")
+        for _, c in ipairs(crit or {}) do L("   " .. c) end
+        local tip = inst.rooms and inst.rooms[stage]
+        if tip then L(C_GOLD .. "Tip: |r" .. C_WHITE .. tip .. "|r") end
+    end
+    local open = n >= LAB_ROOMS and (not tier or tier >= 8)
+    if open then
+        L(C_GREEN .. "Boss door OPEN -- north chamber: Den'zara, then Kindo'jan.|r")
+    elseif tier and tier < 8 then
+        L(C_DIM .. "Boss door stays shut below Tier 8 -- finish here and run Tier 8+ for Kindo'jan.|r")
+    else
+        L(C_DIM .. ("Boss door: clear %d more room%s on Tier 8+."):format(LAB_ROOMS - n, (LAB_ROOMS - n) == 1 and "" or "s") .. "|r")
+    end
+    L("")
+    return open
+end
+
 local function ShowInstance(inst, instType)
     -- Hide tooltip when showing full panel
     if tooltipFrame and tooltipFrame:IsShown() then tooltipFrame:Hide() end
 
     local f = CreateCheatFrame()
+    f.currentInst, f.currentInstType = inst, instType
     local playerRole = GetPlayerRole()
 
     local typeTag = ""
@@ -835,6 +972,11 @@ local function ShowInstance(inst, instType)
     local lines = {}
     local function L(s) lines[#lines + 1] = s end
 
+    local labLocked = false
+    if inst.name == LAB_NAME then
+        labLocked = not LabProgressLines(inst, L)
+    end
+
     -- Instance-level trash notes
     if inst.trashNotes then
         L(C_RED .. "== KEY TRASH ==|r")
@@ -850,9 +992,10 @@ local function ShowInstance(inst, instType)
             if instType == "raid" and IsBossKilled(boss) then
                 killedBosses[#killedBosses + 1] = boss
             else
-                L(C_CYAN .. "==============================|r")
-                L(C_CYAN .. "Boss " .. (boss.order or "") .. ": " .. boss.name .. "|r")
-                L(C_CYAN .. "==============================|r")
+                local bc = labLocked and C_DIM or C_CYAN
+                L(bc .. "==============================|r")
+                L(bc .. "Boss " .. (boss.order or "") .. ": " .. boss.name .. (labLocked and "  (locked)" or "") .. "|r")
+                L(bc .. "==============================|r")
                 L("")
                 L(BuildCheatText(boss, playerRole))
                 L("")
@@ -1201,6 +1344,9 @@ ef:RegisterEvent("ENCOUNTER_START")
 ef:RegisterEvent("ENCOUNTER_END")
 ef:RegisterEvent("UPDATE_INSTANCE_INFO")
 ef:RegisterEvent("BOSS_KILL")
+ef:RegisterEvent("SCENARIO_UPDATE")
+ef:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
+ef:RegisterEvent("SCENARIO_COMPLETED")
 ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
         VoidCheatSheetDB = VoidCheatSheetDB or {}
@@ -1269,6 +1415,29 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
             MarkBossKilled(arg1)
         end
         return
+    end
+
+    -- Labyrinth room tracking (scenario stages). Re-render the panel in place if it's
+    -- showing the Labyrinth, keeping the scroll position.
+    if event == "SCENARIO_UPDATE" or event == "SCENARIO_CRITERIA_UPDATE" or event == "SCENARIO_COMPLETED" then
+        pcall(LabTrack)
+        if frame and frame:IsShown() and frame.currentInst and frame.currentInst.name == LAB_NAME then
+            local sv = frame.scroll and frame.scroll:GetVerticalScroll() or 0
+            pcall(ShowInstance, frame.currentInst, frame.currentInstType)
+            if frame.scroll then frame.scroll:SetVerticalScroll(sv) end
+        end
+        return
+    end
+
+    if event == "PLAYER_ENTERING_WORLD" then
+        -- zoning INTO the Labyrinth (not a /reload) = a new run: reset the room count
+        local isReload = arg2
+        if InLabyrinth() and not isReload then
+            VoidCheatSheetDB.lab = { cleared = {}, count = 0 }
+        end
+        if InLabyrinth() then
+            C_Timer.After(2, function() pcall(LabTrack) end)
+        end
     end
 
     if event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_INSTANCE_INFO" then

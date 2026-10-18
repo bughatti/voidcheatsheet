@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.4] — 2026-10-18
+
+### Added
+- **The Labyrinth of Kindo'jan** (12.1.5): Den'zara and Kindo'jan — the 3-strikes rule, every ability, the four-Loa intermission in order, and when to Bloodlust. Pops up automatically inside the Labyrinth.
+- **Labyrinth room tracker**: the sheet shows the room you're in with its objective, how many rooms you've cleared this run (out of 9), and whether the Kindo'jan door will open (all 9 on Tier 8+). The bosses stay greyed out until then. Updates live as you play.
+- **Coffer Key warning** on the Labyrinth sheet: shows how many Restored Coffer Keys you have, in red if it's fewer than the 3 the end-of-run chests need.
+
 ## [2.4.3] — 2026-10-18
 
 ### Fixed
