@@ -20,6 +20,8 @@ local C_CYAN = "|cFF00C7FF"
 local C_GOLD = "|cFFFFD100"
 local C_GREEN = "|cFF00FF00"
 local C_RED = "|cFFFF4444"
+-- WoW Forever (Classic+ on the modern client, TOC 16001).
+local IS_FOREVER = (select(4, GetBuildInfo()) or 0) < 100000
 local C_BLUE = "|cFF5599FF"
 local C_ORANGE = "|cFFFF9900"
 local C_DIM = "|cFF8C8C9E"
@@ -44,6 +46,7 @@ local ROLE_LABELS = {
 -- "[M+]" only inside a keystone or a Mythic dungeon; "[Dungeon]" otherwise
 -- (Normal/Heroic/follower runs were all labelled M+).
 local function DungeonTag()
+    if IS_FOREVER then return "[Dungeon]" end   -- no Mythic+ in Forever
     local inKey = C_ChallengeMode and C_ChallengeMode.GetActiveChallengeMapID
         and (C_ChallengeMode.GetActiveChallengeMapID() or 0) > 0
     local _, instType, diff = GetInstanceInfo()
@@ -1061,7 +1064,7 @@ local function ShowBossList()
 
     -- Dungeons
     if D.dungeons and #D.dungeons > 0 then
-        L(C_ORANGE .. "== MYTHIC+ DUNGEONS ==|r")
+        L(C_ORANGE .. (IS_FOREVER and "== DUNGEONS ==|r" or "== MYTHIC+ DUNGEONS ==|r"))
         for _, dng in ipairs(D.dungeons) do
             L(C_CYAN .. "  " .. dng.name .. "|r")
             local bossList = dng.bosses or dng.encounters
@@ -1133,6 +1136,10 @@ local function OnTargetChanged(unit)
        or instType == "arena" or instType == "pvp" then
         return
     end
+    -- WoW Forever: no open-world bosses in our data, and fuzzy name matching against
+    -- ~120 classic dungeon bosses kept popping sheets while questing (stress test,
+    -- 2026-10-21). Forever sheets open on dungeon entry instead (see PLAYER_ENTERING_WORLD).
+    if IS_FOREVER then return end
 
     unit = unit or "target"
     if not UnitExists(unit) then
@@ -1437,6 +1444,15 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
         end
         if InLabyrinth() then
             C_Timer.After(2, function() pcall(LabTrack) end)
+        end
+        -- WoW Forever: open the dungeon's sheet once when you zone in (not on /reload).
+        if IS_FOREVER and not isReload and autoPopupEnabled then
+            C_Timer.After(2, function()
+                local _, it = IsInInstance()
+                if it ~= "party" then return end
+                local ok, inst, kind = pcall(FindInstance, (GetInstanceInfo()))
+                if ok and inst then pcall(ShowInstance, inst, kind) end
+            end)
         end
     end
 

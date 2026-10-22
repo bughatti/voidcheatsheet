@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.4.5] — 2026-10-21
+
+### Added
+- **WoW Forever support.** Cheat sheets for the leveling dungeons:
+  - the classic dungeons from Ragefire Chasm through Stratholme
+  - Forever's new dungeons: Hall of Thanes, Ruins of Lordaeron, Excavation Site: Wetlands and City of Dalaran
+  - In Forever the sheet opens when you zone in, and labels say "Dungeon" (there's no Mythic+). Open any sheet yourself with `/cs <dungeon or boss>`.
+
+### Fixed
+- **WoW Forever:** sheets no longer pop up while you're questing in the open world.
+
 ## [2.4.4] — 2026-10-18
 
 ### Added
