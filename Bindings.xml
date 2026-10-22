@@ -1,0 +1,8 @@
+<Bindings>
+  <Binding name="VOIDCS_SERMON_DOOR" header="VOIDCHEATSHEET" category="ADDONS">VoidCheatSheet_SermonKey("DOOR")</Binding>
+  <Binding name="VOIDCS_SERMON_LEFT" category="ADDONS">VoidCheatSheet_SermonKey("LEFT")</Binding>
+  <Binding name="VOIDCS_SERMON_FAR" category="ADDONS">VoidCheatSheet_SermonKey("FAR")</Binding>
+  <Binding name="VOIDCS_SERMON_RIGHT" category="ADDONS">VoidCheatSheet_SermonKey("RIGHT")</Binding>
+  <Binding name="VOIDCS_SERMON_GO" category="ADDONS">VoidCheatSheet_SermonKey("HUB")</Binding>
+  <Binding name="VOIDCS_SERMON_RESET" category="ADDONS">VoidCheatSheet_SermonKey("RESET")</Binding>
+</Bindings>

@@ -40,7 +40,9 @@ local function CreateMinimapButton()
 
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:SetScript("OnClick", function(_, button)
-        if button == "RightButton" then
+        if IsShiftKeyDown() and VoidCheatSheet_ToggleSermonWheel then
+            VoidCheatSheet_ToggleSermonWheel()
+        elseif button == "RightButton" then
             if SlashCmdList and SlashCmdList["VOIDCHEATSHEET"] then
                 SlashCmdList["VOIDCHEATSHEET"]("marks")
             end
@@ -56,6 +58,7 @@ local function CreateMinimapButton()
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine("Left-click: toggle panel", 0.85, 0.85, 0.85)
         GameTooltip:AddLine("Right-click: list saved marks", 0.85, 0.85, 0.85)
+        GameTooltip:AddLine("Shift-click: Sermon marker pad", 0.85, 0.85, 0.85)
         GameTooltip:AddLine("Drag: reposition around minimap", 0.7, 0.7, 0.7)
         GameTooltip:Show()
     end)

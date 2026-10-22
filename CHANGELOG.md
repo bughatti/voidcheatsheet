@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.4.7] — 2026-10-22
+
+### Added
+- **Azta'rec memory helper (Venomfall Deeps Nemesis).** A small marker pad for Sermon of Ula'tek, the wave pattern that repeats with no warnings:
+  - Before the pull, drop world markers: **Diamond** in the quadrant you walk in through, then around to the left: **X**, **Star**, **Circle**.
+  - During the warned waves, tap the safe marker on the pad. You can also bind keys under Keybindings → AddOns → VoidCheatSheet.
+  - The replay runs itself, timed to the boss's casts. Each marker blinks big in the middle of your screen exactly when you need to move there, with the next one shown beside it and a sound on every switch.
+  - The pad opens by itself in Venomfall Deeps. Shift-click the minimap button to try it anywhere.
+
 ## [2.4.6] — 2026-10-21
 
 ### Fixed
