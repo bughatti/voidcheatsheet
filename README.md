@@ -27,6 +27,13 @@ A hand-curated, role-aware boss strategy panel: mechanics, phase breakdowns, dan
 - **Target a delve boss** — the same card appears before the pull
 - **Click the card** for the full cheat sheet; **Shift-drag** it to move it anywhere (position is remembered)
 
+### Azta'rec memory helper (Venomfall Deeps)
+The Nemesis's **Sermon of Ula'tek** shows you a safe quadrant each wave, then repeats the same order with no warnings. VoidCheatSheet gives you a small **marker pad** for it:
+- **Before the pull**, drop world markers the same way every time: **Diamond** in the quadrant you walk in through, then around to the left: **X**, **Star**, **Circle**
+- **During the warned waves**, tap the safe marker — click it on the pad, or bind keys under *Keybindings → AddOns → VoidCheatSheet* so you never touch the mouse
+- **The replay runs itself** — it's timed to the boss's casts: each marker blinks big in the middle of your screen exactly when you need to move there, with a sound on every switch
+- The pad opens by itself in Venomfall Deeps (Alt-drag to move it). Shift-click the minimap button to try it anywhere
+
 ### Handy extras
 - **Share** a boss TL;DR and tips to party/raid chat with one click
 - **Kill tracking** — bosses you've already killed this lockout are marked

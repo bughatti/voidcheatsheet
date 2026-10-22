@@ -363,7 +363,7 @@ D.delves[#D.delves + 1] = {
                 { name = "Noxious Bile", desc = "Frontal cone that leaves poison pools -- point it at the edge to keep the middle clean." },
                 { name = "Venom Storm", desc = "Slow poison waves crossing the arena -- move through the gaps." },
                 { name = "Serpent's Strike", desc = "Physical hit on tanks -- active mitigation." },
-                { name = "Sermon of Ula'tek (90/60/30%)", desc = "Boss moves to the center; 3 of 4 quadrants fill with venom each wave and 1 is safe. Then the SAME order repeats with no visual cues -- memorize it. Waves: 3/4/5 on ?, 5/6/7 on ??." },
+                { name = "Sermon of Ula'tek (90/60/30%)", desc = "Boss moves to the center; 3 of 4 quadrants fill with venom each wave and 1 is safe. Then the SAME order repeats with no visual cues -- memorize it. Waves: 3/4/5 on ?, 5/6/7 on ??. VoidCheatSheet helper: before the pull drop world markers Diamond (door quadrant), then around to the left X, Star, Circle. The Sermon pad opens in the delve -- tap the safe marker each warned wave; the replay then blinks each marker big mid-screen, timed to the boss's Echo casts." },
                 { name = "Echo of Azta'rec (?? only)", desc = "Spawns each intermission with the same abilities and less health. Kill it before the intermission ends or you fight two bosses (two Soul Extinctions). It can be crowd-controlled." },
             },
             companion = "Tank/DPS: Healer Valeera to dispel Void Toxin. Healers: DPS Valeera to cover Soul Extinction interrupts. Common picks: Frostheart Venom poison, Corrosive Bilespear + Soul-Cracking Dreamcatcher curios.",
