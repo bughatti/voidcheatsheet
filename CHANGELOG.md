@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.6] — 2026-10-21
+
+### Fixed
+- **Labyrinth room counter** no longer starts a new run at 9/9. It was carrying over rooms from earlier runs and counting the treasure room as a room. It now resets each run and counts 1 to 9.
+
+### Changed
+- **Kindo'jan tips from a live Tier 8 kill:** burning the boss and skipping the 4 Headhunters took him to about 40% before the first intermission. The Juggernaut's charge shows as a line on the ground, so step off it; Death Knights can ride through it with Death Charge.
+
 ## [2.4.5] — 2026-10-21
 
 ### Added

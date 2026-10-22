@@ -829,7 +829,9 @@ local LAB_NAME, LAB_HUB, LAB_ROOMS = "The Labyrinth of Kindo'jan", "Empty Halls"
 -- "Choose Your Path" shows after each room while you pick the next door).
 local LAB_HUBS = { ["Empty Halls"] = true, ["Choose Your Path"] = true,
     -- the boss chamber is a stage too, not one of the 9 rooms (counted 12/9 on the kill run)
-    ["Soul of the Labyrinth"] = true }
+    ["Soul of the Labyrinth"] = true,
+    -- end-of-run stages (were counted as rooms, saved data 2026-10-21)
+    ["Treasure Room"] = true, ["Collect Your Reward!"] = true }
 
 local function InLabyrinth()
     local name = GetInstanceInfo()
@@ -842,6 +844,12 @@ local function LabState()
     -- drop any hub stage an older build counted as a room
     for hub in pairs(LAB_HUBS) do
         if s.cleared[hub] then s.cleared[hub] = nil; s.count = math.max(0, (s.count or 1) - 1) end
+    end
+    -- More than 9 rooms can't happen in one run: it's leftover from older runs
+    -- (an earlier build never reset between runs -- saved count hit 17). Start over.
+    if (s.count or 0) > LAB_ROOMS then
+        VoidCheatSheetDB.lab = { cleared = {}, count = 0, current = s.current }
+        s = VoidCheatSheetDB.lab
     end
     return s
 end
@@ -877,6 +885,13 @@ local function LabTrack()
     if not InLabyrinth() then return end
     local s = LabState()
     local stage = LabStage()
+    -- New run? Each room appears once per run, so walking into a room we already
+    -- counted means a fresh run. (The zone-in reset alone missed it: the count
+    -- reached 17 across runs and showed 9/9 at the start of a new one, 2026-10-21.)
+    if stage and stage ~= s.current and not LAB_HUBS[stage] and s.cleared[stage] then
+        VoidCheatSheetDB.lab = { cleared = {}, count = 0 }
+        s = VoidCheatSheetDB.lab
+    end
     if stage and stage ~= s.current then
         if s.current and not LAB_HUBS[s.current] and not s.cleared[s.current] then
             s.cleared[s.current] = true
@@ -1439,7 +1454,13 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     if event == "PLAYER_ENTERING_WORLD" then
         -- zoning INTO the Labyrinth (not a /reload) = a new run: reset the room count
         local isReload = arg2
-        if InLabyrinth() and not isReload then
+        -- Reset when you come INTO the Labyrinth from outside. Tracked with a saved
+        -- flag (set whenever we load in anywhere else) instead of trusting the
+        -- zone-in event alone, which didn't reset between runs.
+        VoidCheatSheetDB.lab = VoidCheatSheetDB.lab or { cleared = {}, count = 0 }
+        if not InLabyrinth() then
+            VoidCheatSheetDB.lab.wasOutside = true
+        elseif VoidCheatSheetDB.lab.wasOutside or not isReload then
             VoidCheatSheetDB.lab = { cleared = {}, count = 0 }
         end
         if InLabyrinth() then
