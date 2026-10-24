@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.8] — 2026-10-24
+
+### Fixed
+- **Cheat sheets no longer pop up for unrelated NPCs out in the world.** Targeting or hovering an NPC only opens a boss sheet when the name matches the boss exactly. Before, any NPC whose name was part of a boss name could trigger it (Replicating Venomborne opened in The Waking Shores). Searching by name still finds partial matches.
+
 ## [2.4.7] — 2026-10-22
 
 ### Added
