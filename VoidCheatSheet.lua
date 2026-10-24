@@ -716,6 +716,15 @@ local function FindBoss(search)
     return nil
 end
 
+-- Exact match only, for names read off a TARGET / MOUSEOVER unit. The partial match
+-- above popped sheets for any NPC whose name sits inside a boss name (a critter named
+-- "Cat" would match "Repli-cat-ing Venomborne"; it popped in The Waking Shores, 2026-10-24).
+local function FindBossForUnit(name)
+    if not name or name == "" or not D.byName then return nil end
+    local low = name:lower()
+    return D.byName[(low:gsub("%s+", ""))] or D.byName[(low:gsub("[%s%-']", ""))]
+end
+
 ----------------------------------------------------------------------
 -- Find instance by name (fuzzy) — raids, dungeons, delves
 ----------------------------------------------------------------------
@@ -1200,7 +1209,7 @@ local function OnTargetChanged(unit)
         if rawName and not isSecret(rawName) then
             local scrubbed = VoidLib and VoidLib.Secrets
                 and VoidLib.Secrets.SafeKey(rawName) or rawName
-            local ok, result = pcall(FindBoss, scrubbed)
+            local ok, result = pcall(FindBossForUnit, scrubbed)
             if ok and result then
                 boss = result
             end
