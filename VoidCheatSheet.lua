@@ -68,11 +68,13 @@ end
 -- burst of lines, which aborted the share after line 1. Strip colors, split long lines on
 -- word boundaries, and pace the queue so a full share always goes out.
 local CHAT_MAX, CHAT_GAP = 250, 0.35
+-- Global SendChatMessage is a deprecation shim (absent without fallbacks loaded).
+local SendChat = (C_ChatInfo and C_ChatInfo.SendChatMessage) or SendChatMessage
 local chatQueue, chatBusy = {}, false
 local function PumpChat()
     local item = table.remove(chatQueue, 1)
     if not item then chatBusy = false; return end
-    pcall(SendChatMessage, item[1], item[2])
+    pcall(SendChat, item[1], item[2])
     C_Timer.After(CHAT_GAP, PumpChat)
 end
 local function SendChunked(text, channel)
@@ -674,6 +676,7 @@ ShowBoss = function(boss)
     local playerRole = GetPlayerRole()
 
     f.currentBoss = boss
+    f.currentInst = nil  -- not an instance view: scenario updates must not re-render over it
     SetBossPortrait(f, boss)
     f.title:SetText(C_CYAN .. boss.name .. "|r")
     f.content:SetText(BuildCheatText(boss, playerRole))
@@ -805,7 +808,8 @@ local function SyncKillsFromLockouts()
         -- instanceIDMostSig, isRaid, maxPlayers, difficultyName, numEncounters, encounterProgress
         -- numEncounters is slot 11 (the prior implementation read slot 12 = encounterProgress
         -- bitmask, which produced bogus iteration counts on partially-killed raids).
-        local ok, _, _, _, _, locked, _, _, _, _, numEnc = pcall(GetSavedInstanceInfo, i)
+        -- pcall's ok flag comes first, so slot 11 is the 12th value here.
+        local ok, _, _, _, _, locked, _, _, _, _, _, numEnc = pcall(GetSavedInstanceInfo, i)
         -- Defensive: API can return numEnc as string (or empty) in some
         -- 12.0.5 cases. Coerce to number before comparison.
         numEnc = tonumber(numEnc) or 0
@@ -1053,6 +1057,7 @@ local function ShowBossList()
     SetBossPortrait(f, nil)
     f.title:SetText(C_CYAN .. "VoidCheatSheet — Content Guide|r")
     f.currentBoss = nil
+    f.currentInst = nil
 
     local lines = {}
     local function L(s) lines[#lines + 1] = s end
@@ -1155,11 +1160,16 @@ local function OnTargetChanged(unit)
     -- contexts and rely on ENCOUNTER_START (clean encounterID arg) to show
     -- the cheat sheet when the pull actually happens. Open world / friendly
     -- target hover still works.
-    local _, instType = IsInInstance()
+    local inInstance, instType = IsInInstance()
     if instType == "raid" or instType == "party"
        or instType == "arena" or instType == "pvp" then
         return
     end
+    -- Sheets are for dungeons, M+, raids (and delves): never pop one out in the open
+    -- world. Name matching kept firing on quest givers who share a boss's name, even
+    -- after the exact-match fix in 2.4.8 (2026-10-25). Instanced content still opens
+    -- sheets on entry and on ENCOUNTER_START; delves (scenario) via the NPC ID below.
+    if not inInstance then return end
     -- WoW Forever: no open-world bosses in our data, and fuzzy name matching against
     -- ~120 classic dungeon bosses kept popping sheets while questing (stress test,
     -- 2026-10-21). Forever sheets open on dungeon entry instead (see PLAYER_ENTERING_WORLD).
@@ -1487,7 +1497,9 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     end
 
     if event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_INSTANCE_INFO" then
-        if RequestRaidInfo then RequestRaidInfo() end
+        -- Request only on zone-in: UPDATE_INSTANCE_INFO is RequestRaidInfo's reply,
+        -- so re-requesting from it loops (and keeps resetting the sync timer).
+        if event == "PLAYER_ENTERING_WORLD" and RequestRaidInfo then RequestRaidInfo() end
         -- Debounce: UPDATE_INSTANCE_INFO can fire repeatedly in quick succession.
         if syncTimer then syncTimer:Cancel() end
         syncTimer = C_Timer.NewTimer(2, function()
@@ -1783,7 +1795,11 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
     end
 
     if msg == "share" then
-        local boss = frame and frame.currentBoss
+        -- Prefer whichever view is visible (a tooltip hides the panel but leaves
+        -- its stale currentBoss behind), then fall back to the last one shown.
+        local boss = (frame and frame:IsShown() and frame.currentBoss)
+            or (tooltipFrame and tooltipFrame:IsShown() and tooltipFrame.currentBoss)
+            or (frame and frame.currentBoss)
         if not boss and tooltipFrame then boss = tooltipFrame.currentBoss end
         if boss then
             ShareBossToChat(boss)
