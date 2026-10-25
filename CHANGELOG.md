@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.9] — 2026-10-25
+
+### Fixed
+- **No more cheat sheets out in the world.** Sheets now only open inside dungeons, Mythic+, raids and delves: when you pull a boss, when you enter, or when you target a delve boss. Quest givers who share a name with a boss no longer open one.
+- **Weekly kill tracking works again.** Lockouts from the raid-info window were being skipped, so killed bosses weren't marked.
+- **Sharing a sheet to chat** works with Blizzard's newer chat function, and **`/cs share`** shares the sheet you're looking at.
+- Opening a boss sheet no longer gets replaced by the Labyrinth guide, and raid info is no longer requested over and over.
+
 ## [2.4.8] — 2026-10-24
 
 ### Fixed
