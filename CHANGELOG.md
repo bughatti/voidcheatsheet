@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.10] — 2026-10-26
+
+### Changed
+- **Labyrinth of Kindo'jan:** below max level the panel now tells you why the boss door stays shut. Tiers above 3 open only at level 90, so Kindo'jan (which needs all 9 rooms on Tier 8+) waits until then.
+
 ## [2.4.9] — 2026-10-25
 
 ### Fixed

@@ -973,7 +973,13 @@ local function LabProgressLines(inst, L)
     if open then
         L(C_GREEN .. "Boss door OPEN -- north chamber: Den'zara, then Kindo'jan.|r")
     elseif tier and tier < 8 then
-        L(C_DIM .. "Boss door stays shut below Tier 8 -- finish here and run Tier 8+ for Kindo'jan.|r")
+        -- tiers above 3 open only at max level (seen live at 88, 2026-10-26)
+        local maxLvl = (GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion()) or 90
+        if (UnitLevel("player") or 0) < maxLvl then
+            L(C_DIM .. ("Boss door stays shut below Tier 8, and tiers above 3 open at level %d -- Kindo'jan waits until then.|r"):format(maxLvl))
+        else
+            L(C_DIM .. "Boss door stays shut below Tier 8 -- finish here and run Tier 8+ for Kindo'jan.|r")
+        end
     else
         L(C_DIM .. ("Boss door: clear %d more room%s on Tier 8+."):format(LAB_ROOMS - n, (LAB_ROOMS - n) == 1 and "" or "s") .. "|r")
     end
