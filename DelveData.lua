@@ -574,6 +574,7 @@ D.delveTips = {
 -- 12.1.5: THE LABYRINTH OF KINDO'JAN (SE Eversong, Zul'Aman border)
 -- Nine-chamber delve-like challenge; final boss room (north, via Akil'zon's
 -- Roost) opens only after all 9 chambers are cleared on Tier 8+ in one run.
+-- Tiers above 3 need max level (90): a level-88 character could only pick 1-3 (2026-10-26).
 -- Name MUST match GetInstanceInfo() ("The Labyrinth of Kindo'jan", verified
 -- in game 2026-10-18 via /cs scan: instanceType=scenario, instanceID 3043).
 -- Sources: Method.gg boss guide (Oct 10), Skycoach (Oct 13), ExpCarry (Oct 9,
