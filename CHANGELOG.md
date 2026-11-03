@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.13] — 2026-11-02
+
+### Changed
+- **Settings are per character.** Each character keeps its own VoidCheatSheet settings, and a new character starts with the settings of the one you played last, so nothing resets when you update. Right-click the Void hub icon by your minimap and pick **Copy settings from...** to take another character's settings for one Void addon or all of them. Window positions and saved boss spots stay shared.
+
+### Fixed
+- **Weekly boss kills are per character.** Killing a boss on one character no longer marks it dead on your others: each character's list fills back in from its own lockouts. Labyrinth progress is per character too.
+
 ## [2.4.12] — 2026-11-02
 
 ### Changed

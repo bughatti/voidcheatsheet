@@ -13,6 +13,17 @@ local D = VoidCheatSheetData
 
 VoidCheatSheetDB = VoidCheatSheetDB or {}
 
+-- Settings are per character (CharSettings.lua); window positions and saved
+-- boss spots stay account-wide.
+select(2, ...).CharSettings.Register(ADDON_NAME, "VoidCheatSheetDB", { "autoPopup", "minimapHidden" })
+
+-- Per character: weekly boss kills (lockouts are per character) and Labyrinth progress.
+-- Up to 2.4.12 these were account-wide, so one character's kills showed on all of them.
+local function CharDB()
+    VoidCheatSheetCharDB = VoidCheatSheetCharDB or {}
+    return VoidCheatSheetCharDB
+end
+
 ----------------------------------------------------------------------
 -- Colors
 ----------------------------------------------------------------------
@@ -766,11 +777,11 @@ local function SecondsUntilWeeklyReset()
 end
 
 local function PurgeExpiredKills()
-    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+    CharDB().killed = CharDB().killed or {}
     local now = time()
-    for eid, expiry in pairs(VoidCheatSheetDB.killed) do
+    for eid, expiry in pairs(CharDB().killed) do
         if type(expiry) ~= "number" or expiry <= now then
-            VoidCheatSheetDB.killed[eid] = nil
+            CharDB().killed[eid] = nil
         end
     end
 end
@@ -783,11 +794,11 @@ local function IsBossKilled(boss)
         local ok, complete = pcall(C_RaidLocks.IsEncounterComplete, boss.mapID, boss.encounterID)
         if ok and complete then return true end
     end
-    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
-    local expiry = VoidCheatSheetDB.killed[boss.encounterID]
+    CharDB().killed = CharDB().killed or {}
+    local expiry = CharDB().killed[boss.encounterID]
     if not expiry then return false end
     if expiry <= time() then
-        VoidCheatSheetDB.killed[boss.encounterID] = nil
+        CharDB().killed[boss.encounterID] = nil
         return false
     end
     return true
@@ -795,8 +806,8 @@ end
 
 local function MarkBossKilled(encounterID)
     if not encounterID then return end
-    VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
-    VoidCheatSheetDB.killed[encounterID] = time() + SecondsUntilWeeklyReset()
+    CharDB().killed = CharDB().killed or {}
+    CharDB().killed[encounterID] = time() + SecondsUntilWeeklyReset()
 end
 
 local function SyncKillsFromLockouts()
@@ -852,8 +863,8 @@ local function InLabyrinth()
 end
 
 local function LabState()
-    VoidCheatSheetDB.lab = VoidCheatSheetDB.lab or { cleared = {}, count = 0 }
-    local s = VoidCheatSheetDB.lab
+    CharDB().lab = CharDB().lab or { cleared = {}, count = 0 }
+    local s = CharDB().lab
     -- drop any hub stage an older build counted as a room
     for hub in pairs(LAB_HUBS) do
         if s.cleared[hub] then s.cleared[hub] = nil; s.count = math.max(0, (s.count or 1) - 1) end
@@ -861,8 +872,8 @@ local function LabState()
     -- More than 9 rooms can't happen in one run: it's leftover from older runs
     -- (an earlier build never reset between runs -- saved count hit 17). Start over.
     if (s.count or 0) > LAB_ROOMS then
-        VoidCheatSheetDB.lab = { cleared = {}, count = 0, current = s.current }
-        s = VoidCheatSheetDB.lab
+        CharDB().lab = { cleared = {}, count = 0, current = s.current }
+        s = CharDB().lab
     end
     return s
 end
@@ -902,8 +913,8 @@ local function LabTrack()
     -- counted means a fresh run. (The zone-in reset alone missed it: the count
     -- reached 17 across runs and showed 9/9 at the start of a new one, 2026-10-21.)
     if stage and stage ~= s.current and not LAB_HUBS[stage] and s.cleared[stage] then
-        VoidCheatSheetDB.lab = { cleared = {}, count = 0 }
-        s = VoidCheatSheetDB.lab
+        CharDB().lab = { cleared = {}, count = 0 }
+        s = CharDB().lab
     end
     if stage and stage ~= s.current then
         if s.current and not LAB_HUBS[s.current] and not s.cleared[s.current] then
@@ -1397,7 +1408,7 @@ ef:RegisterEvent("SCENARIO_COMPLETED")
 ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
     if event == "ADDON_LOADED" and arg1 == ADDON_NAME then
         VoidCheatSheetDB = VoidCheatSheetDB or {}
-        VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+        CharDB().killed = CharDB().killed or {}
         PurgeExpiredKills()
         if VoidCheatSheetDB.autoPopup == false then
             autoPopupEnabled = false
@@ -1458,7 +1469,7 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
         -- skip BOSS_KILL to avoid double-marking on Mythic split kills.
         if inEncounter then return end
         if arg1 and D.byEncounterID and D.byEncounterID[arg1]
-           and not (VoidCheatSheetDB.killed and VoidCheatSheetDB.killed[arg1]) then
+           and not (CharDB().killed and CharDB().killed[arg1]) then
             MarkBossKilled(arg1)
         end
         return
@@ -1482,11 +1493,11 @@ ef:SetScript("OnEvent", function(_, event, arg1, arg2, arg3, arg4, arg5)
         -- Reset when you come INTO the Labyrinth from outside. Tracked with a saved
         -- flag (set whenever we load in anywhere else) instead of trusting the
         -- zone-in event alone, which didn't reset between runs.
-        VoidCheatSheetDB.lab = VoidCheatSheetDB.lab or { cleared = {}, count = 0 }
+        CharDB().lab = CharDB().lab or { cleared = {}, count = 0 }
         if not InLabyrinth() then
-            VoidCheatSheetDB.lab.wasOutside = true
-        elseif VoidCheatSheetDB.lab.wasOutside or not isReload then
-            VoidCheatSheetDB.lab = { cleared = {}, count = 0 }
+            CharDB().lab.wasOutside = true
+        elseif CharDB().lab.wasOutside or not isReload then
+            CharDB().lab = { cleared = {}, count = 0 }
         end
         if InLabyrinth() then
             C_Timer.After(2, function() pcall(LabTrack) end)
@@ -1761,10 +1772,10 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
     -- /cs killed — list bosses marked killed this week
     if msg == "killed" or msg == "locks" or msg == "lockouts" then
         PurgeExpiredKills()
-        VoidCheatSheetDB.killed = VoidCheatSheetDB.killed or {}
+        CharDB().killed = CharDB().killed or {}
         local count = 0
         local now = time()
-        for eid, expiry in pairs(VoidCheatSheetDB.killed) do
+        for eid, expiry in pairs(CharDB().killed) do
             local boss = D.byEncounterID and D.byEncounterID[eid]
             local name = (boss and boss.name) or ("encounterID " .. tostring(eid))
             local hoursLeft = math.max(0, math.floor((expiry - now) / 3600))
@@ -1781,7 +1792,7 @@ SlashCmdList["VOIDCHEATSHEET"] = function(msg)
 
     -- /cs unkill — clear all killed markers
     if msg == "unkill" or msg == "clearkilled" then
-        VoidCheatSheetDB.killed = {}
+        CharDB().killed = {}
         print(C_CYAN .. "VoidCheatSheet:|r Cleared all killed-boss markers.")
         return
     end
