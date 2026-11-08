@@ -1573,6 +1573,20 @@ function VoidCheatSheet_Toggle()
     end
 end
 
+-- Void hub quick box switch (VoidHubBundle.lua; the user, 2026-11-08: "add on switch for
+-- cheat sheet"): the sheet opening on its own at a boss / delve. Same as /cs popup on|off.
+VoidHubToggles = VoidHubToggles or {}
+table.insert(VoidHubToggles, {
+    id = "VoidCheatSheet.popup", group = "Cheat sheet", label = "Auto-popup",
+    tip = "The cheat sheet opens on its own when a boss fight starts or you enter a delve (/cs popup on|off).",
+    get = function() return autoPopupEnabled end,
+    set = function(on)
+        autoPopupEnabled = on and true or false
+        VoidCheatSheetDB = VoidCheatSheetDB or {}
+        VoidCheatSheetDB.autoPopup = autoPopupEnabled
+    end,
+})
+
 SLASH_VOIDCHEATSHEET1 = "/cs"
 SLASH_VOIDCHEATSHEET2 = "/cheatsheet"
 SlashCmdList["VOIDCHEATSHEET"] = function(msg)

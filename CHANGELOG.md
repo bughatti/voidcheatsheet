@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.14] — 2026-11-08
+
+### Added
+- **Quick switch for the auto-popup.** Left-click the Void hub button by your minimap (or `/vquick`) and the Quick switches box has **Cheat sheet: Auto-popup** on/off, so you can stop the sheet opening on its own at a boss or in a delve without typing `/cs popup off`.
+
 ## [2.4.13] — 2026-11-02
 
 ### Changed
