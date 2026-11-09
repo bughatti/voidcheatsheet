@@ -1,6 +1,8 @@
 # VoidCheatSheet
 
-**In-game cheat sheets for every Midnight raid, the full Mythic+ pool, and delve bosses — auto-pops on pull.**
+**Works on:** WoW Midnight · WoW Forever (leveling dungeons)
+
+**In-game boss cheat sheets that pop up on pull: every Midnight raid, the Mythic+ pool and delves, plus WoW Forever's leveling dungeons.**
 
 A hand-curated, role-aware boss strategy panel: mechanics, phase breakdowns, dangerous trash, and Tank/Healer/DPS tips with your role highlighted. No theorycrafting required — pull the boss and read.
 
@@ -60,7 +62,7 @@ The Nemesis's **Sermon of Ula'tek** shows you a safe quadrant each wave, then re
 
 ## Getting Started
 
-1. Install with the CurseForge app, or copy the `VoidCheatSheet` folder into `World of Warcraft/_retail_/Interface/AddOns/`.
+1. Install with the CurseForge app, or copy the `VoidCheatSheet` folder into `World of Warcraft/_retail_/Interface/AddOns/` (WoW Forever: `_forever_/Interface/AddOns/`).
 2. Restart WoW or `/reload`.
 3. Pull a boss — or type `/cs` to browse everything.
 
@@ -95,8 +97,8 @@ Anything only one guide documents so far is flagged on its page.
 
 ## Compatibility
 
-- **WoW 12.1.5** (Midnight Season 2)
-- **WoW Forever** (leveling dungeons)
+- **WoW Midnight** 12.1.5 (Season 2): raids, Mythic+ and delves
+- **WoW Forever**: leveling dungeons
 - Standalone — nothing else to install
 - Works alongside DBM, BigWigs, and any UI replacement
 
