@@ -8,6 +8,9 @@
 
 local D = VoidCheatSheetData
 D.delves = {}
+-- Forever has no delves: keep D.delves empty so /cs shows no "== DELVES =="
+-- section and no delve bosses land in the lookups. (Forever audit, 2026-11-10)
+if (select(4, GetBuildInfo()) or 0) < 100000 then return end
 
 ----------------------------------------------------------------------
 -- DELVE 1: COLLEGIATE CALAMITY (Silvermoon City)

@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.16] — 2026-11-10
+
+### Fixed (WoW Forever)
+- `/cs` lists only Forever's dungeons: no Midnight raids, Midnight dungeons or delves. Tank and healer tips follow your group role.
+
 ## [2.4.15] — 2026-11-09
 
 - **Fixed: box borders missing a side.** Depending on where a window sat on screen, its left, right or bottom line could vanish. Borders are now exactly one screen pixel and can't round away.

@@ -15,7 +15,21 @@
 ----------------------------------------------------------------------
 if (select(4, GetBuildInfo()) or 0) >= 100000 then return end   -- retail: skip
 local D = VoidCheatSheetData
-D.dungeons = D.dungeons or {}
+
+-- Forever has no Midnight raids or Midnight M+ dungeons: Data.lua and
+-- DungeonData.lua loaded them anyway, so /cs listed Voidspire with "killed
+-- this week" and Midnight dungeons next to Classic ones. Drop them and
+-- every lookup they filled so Forever only sees the entries below.
+-- Fresh tables (not nil) so nothing that indexes D.* breaks.
+-- DelveData.lua (loads next) skips itself on Forever. (Forever audit, 2026-11-10)
+D.raids = {}
+D.dungeons = {}
+D.byName = {}
+D.byExactName = {}
+D.byInstanceBoss = {}
+D.byEncounterID = {}
+D.byNpcID = {}
+D.bossPositions = {}
 
 -- Remember where our entries start so the registration loop at the
 -- bottom only touches Forever entries (DungeonData.lua already ran its own).

@@ -127,6 +127,16 @@ local function SendChunked(text, channel)
 end
 
 local function GetPlayerRole()
+    -- Forever: the spec API lies (Rogue = spec 1 / Intellect) and the
+    -- GetSpecializationRole global is missing, so the pcall below always fell
+    -- through to "dps". Use the assigned group role instead; "NONE" = dps.
+    -- (Forever audit, 2026-11-10)
+    if IS_FOREVER then
+        local r = UnitGroupRolesAssigned and UnitGroupRolesAssigned("player")
+        if r == "TANK" then return "tank" end
+        if r == "HEALER" then return "healer" end
+        return "dps"
+    end
     local role = "dps"
     pcall(function()
         -- C_SpecializationInfo.GetSpecialization is the modern (10.x+) path;
