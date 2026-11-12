@@ -461,11 +461,15 @@ local function CreateTooltipFrame()
     f:SetClampedToScreen(true)
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
+    -- Plain drag moves it (the user, 11-12: every box movable without a hidden key); a click
+    -- without a drag opens the full panel (on mouse UP, so starting a drag never opens it).
     f:SetScript("OnDragStart", function(self)
-        if IsShiftKeyDown() then self:StartMoving() end   -- SHIFT-drag moves; plain click opens full
+        self.dragged = true
+        self:StartMoving()
     end)
     f:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
+        if self.SetUserPlaced then self:SetUserPlaced(false) end
         local point, _, relPoint, x, y = self:GetPoint(1)
         VoidCheatSheetDB.tooltipPos = { point = point, relPoint = relPoint, x = x, y = y }
     end)
@@ -505,7 +509,7 @@ local function CreateTooltipFrame()
     local hint = f:CreateFontString(nil, "OVERLAY")
     hint:SetFont(FONT, 9, "")
     hint:SetPoint("TOPRIGHT", -6, -7)
-    hint:SetText(C_DIM .. "click: full - shift-drag: move|r")
+    hint:SetText(C_DIM .. "click: full - drag: move|r")
     f.hint = hint
 
     -- Body
@@ -519,10 +523,10 @@ local function CreateTooltipFrame()
     body:SetSpacing(2)
     f.body = body
 
-    f:SetScript("OnMouseDown", function()
-        -- Plain click = expand to the full panel. SHIFT = reserved for moving (the old
-        -- behavior opened-and-hid on press, which made the frame impossible to drag).
-        if IsShiftKeyDown() then return end
+    f:SetScript("OnMouseDown", function() f.dragged = false end)
+    f:SetScript("OnMouseUp", function(_, button)
+        -- a click (no drag) expands to the full panel; opening on press made dragging impossible
+        if f.dragged or button ~= "LeftButton" then f.dragged = false; return end
         if f.currentBoss then
             ShowBoss(f.currentBoss)
             f:Hide()

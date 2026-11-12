@@ -24,6 +24,7 @@
 -- of a box vanishes. VoidPX() asks for one real pixel, and the hook below (installed once, by
 -- the first Void addon loaded) turns snapping off on the edges of flat WHITE8X8 borders, like
 -- Blizzard's NineSliceUtil.DisableSharpening, so a 1 px line always covers a pixel.
+local _, ns = ...   -- ns.Move (VoidMove.lua)
 local function VoidPX()
     local s = UIParent and UIParent:GetEffectiveScale()
     if s and s > 0 and PixelUtil and PixelUtil.GetPixelToUIUnitFactor then return PixelUtil.GetPixelToUIUnitFactor() / s end
@@ -211,9 +212,13 @@ BINDING_NAME_VOIDCS_SERMON_RIGHT = "Sermon: Circle (right)"
 BINDING_NAME_VOIDCS_SERMON_GO    = "Sermon: (unused, replay is automatic)"
 BINDING_NAME_VOIDCS_SERMON_RESET = "Sermon: Reset this Sermon"
 
-local function StartDrag() if IsAltKeyDown() then pad:StartMoving() end end
+-- The pad: plain drag on its background, Alt-drag on its buttons (a plain press marks).
+local function StartDrag(self) if self == pad or IsAltKeyDown() then pad.moving = true; pad:StartMoving() end end
 local function StopDrag()
+    if not pad.moving then return end
+    pad.moving = false
     pad:StopMovingOrSizing()
+    if pad.SetUserPlaced then pad:SetUserPlaced(false) end
     local point, _, relPoint, x, y = pad:GetPoint()
     VoidCheatSheetDB.sermonPos = { point = point, relPoint = relPoint, x = x, y = y }
 end
@@ -223,7 +228,9 @@ local function CreateBig()
     big:SetSize(BIG, BIG)
     big:SetPoint("CENTER", UIParent, "CENTER", 0, 140)
     big:SetFrameStrata("HIGH")
-    big:EnableMouse(false)
+    -- the big marker sits mid-screen in the fight, so it lets clicks through; hold Alt to drag
+    -- it (kept after a restart; the user, 11-12: every box movable)
+    ns.Move(big, { db = function() return VoidCheatSheetDB end, key = "sermonBig", modifier = "alt", clickThrough = true })
     bigTex = big:CreateTexture(nil, "OVERLAY")
     bigTex:SetAllPoints()
     nextTex = big:CreateTexture(nil, "OVERLAY")

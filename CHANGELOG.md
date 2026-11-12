@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.17] — 2026-11-12
+
+- **Every box can be dragged and stays where you put it**, even after a restart. The tip box drags with a plain left-drag (a click still opens the full sheet), the sermon pad drags by its background (Alt-drag on its buttons), and the big marker moves with Alt-drag and lets clicks through otherwise, so it never eats a click in a fight.
+- **Void hub button:** left-click opens one panel with all your Void addons by name, grouped, each with its own on/off switches (it replaces the ring of icons), with a background slider. The hub's info window now stays where you put it.
+
 ## [2.4.16] — 2026-11-10
 
 ### Fixed (WoW Forever)
