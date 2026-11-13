@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.5.0] — 2026-11-13
+
+- **WoW Forever: every dungeon sheet re-checked against the newest Forever guides** (the old ones were written on the level-30 beta).
+  - **Bosses added:** Cookie (Deadmines), High Inquisitor Fairbanks (Scarlet Monastery), Revelosh, the Obsidian Sentinel and the Ancient Stone Keeper (Uldaman), Theka (Zul'Farrak), Razorlash and Rotgrip (Maraudon), Zigris, Halycon and Gizrul (Lower Blackrock Spire), Marduk and Vectus (Scholomance), Magistrate Barthilas (Stratholme), plus a few smaller encounters.
+  - **Wrong tips fixed:**
+    - The Dire Maul tribute run: keep the other bosses alive, kill only Gordok.
+    - Theradras's fear and knockback.
+    - Landslide: burn the boss, his adds vanish.
+    - Baroness Anastari: damage a possessed player to 50% to free them.
+    - Dreamscythe and Weaver are pulled one at a time.
+    - Kill the adds first at Jergosh, Durgen, Witherfang and Springvale.
+  - **Level ranges and boss order** match Forever's map data (Shadowfang 20-30, Blackfathom Deeps and the Stockade 24-32, Uldaman 38-48, and more). The Stockade and Dalaran bosses are in the right order.
+  - **Unconfirmed tips are marked:** a tip only one guide gives ends with "one source, unconfirmed". The level 50-60 dungeons say they're Classic data, since none of them were in the beta.
+  - **The sheet now opens** in each Scarlet Monastery and Dire Maul wing and in the Stormwind Stockades, and mousing over Sneed opens his sheet.
+
 ## [2.4.18] — 2026-11-12
 
 - **Fixed: a side of a box could be missing**, e.g. the right line of the recipes box and its buttons when the game window is an odd number of pixels wide. Every Void box now always shows all four border lines.

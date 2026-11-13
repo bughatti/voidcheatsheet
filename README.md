@@ -14,7 +14,7 @@ A hand-curated, role-aware boss strategy panel: mechanics, phase breakdowns, dan
 - **17 raid bosses** across 4 raids — **The Venomous Abyss** (Season 2), plus Voidspire, Dreamrift, and March on Quel'Danas
 - **57 dungeon bosses** across 16 dungeons — the full **Season 2 Mythic+ pool** (Altar of Fangs, Murder Row, Den of Nalorakk, The Blinding Vale, Voidscar Arena, Kings' Rest, Ruby Life Pools, Temple of Sethraliss) plus the Season 1 pool
 - **22 delve bosses** across 14 delves — including Season 2's **Venomfall Deeps** Nemesis (Azta'rec), **The Ring of Glory**, **Gnarldor Isle**, and the "Children of Ula'tek" story bosses
-- **WoW Forever** — leveling-dungeon sheets for the classic dungeons (Ragefire Chasm through Stratholme) plus Forever's new ones (Hall of Thanes, Ruins of Lordaeron, Excavation Site: Wetlands, City of Dalaran). The sheet opens when you zone in
+- **WoW Forever** — leveling-dungeon sheets for the classic dungeons (Ragefire Chasm through Stratholme) plus Forever's new ones (Hall of Thanes, Ruins of Lordaeron, Excavation Site: Wetlands, City of Dalaran), checked against the newest WoW Forever guides in November 2026. A tip only one guide gives says "one source, unconfirmed", and the level 50-60 dungeons say they're Classic data until they're confirmed on Forever. The sheet opens when you zone in
 - **Kept current with hotfixes** — strategies re-checked against live guides and Blizzard's hotfix notes
 
 ### Every boss page

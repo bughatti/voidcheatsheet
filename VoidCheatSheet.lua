@@ -809,6 +809,11 @@ local function FindInstance(search)
     search = NormKey(search)
     if search == "" then return nil end
 
+    -- Forever instance-name aliases (wing names like "Scarlet Monastery: Library"
+    -- that are not a substring of the entry name). Filled by ForeverDungeonData.lua.
+    local aliased = D.instanceAliases and D.instanceAliases[search]
+    if aliased then return aliased, "dungeon" end
+
     local groups = { { D.raids, "raid" }, { D.dungeons, "dungeon" }, { D.delves, "delve" } }
     for _, g in ipairs(groups) do
         for _, inst in ipairs(g[1] or {}) do
